@@ -1,24 +1,27 @@
 {
-  "name": "ton-node-se-setup",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ton-actions/node-setup.git"
-  },
-  "keywords": [
-    "ton",
-    "node",
-    "setup"
-  ],
-  "author": "Alexander Salamatov",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/ton-actions/node-setup/issues"
-  },
-  "homepage": "https://github.com/ton-actions/node-setup#readme"
+    "name": "ton-node-se-setup",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ton-actions/node-setup.git"
+    },
+    "keywords": [
+        "ton",
+        "node",
+        "setup"
+    ],
+    "author": "Alexander Salamatov",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/ton-actions/node-setup/issues"
+    },
+    "homepage": "https://github.com/ton-actions/node-setup#readme",
+    "dependencies": {
+        "adm-zip": "^0.5.3"
+    }
 }
