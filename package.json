@@ -26,9 +26,11 @@
     "homepage": "https://github.com/ton-actions/node-setup#readme",
     "dependencies": {
         "adm-zip": "^0.5.3",
+        "axios": "^0.21.1",
         "child_process": "^1.0.2",
         "fs-extra": "^9.1.0",
         "https": "^1.0.0",
+        "nginx-binaries": "^0.6.1",
         "path": "^0.12.7",
         "temp": "^0.9.4"
     }
