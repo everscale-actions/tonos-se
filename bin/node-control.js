@@ -10,9 +10,11 @@ global.appRoot = path.join(path.resolve(__dirname),"..");
 switch (command) {
     case 'start':
         require("../lib/nginx/serviceControl.js").start();
+        require("../lib/arango/serviceControl.js").start();
         break;
     case 'stop':
         require("../lib/nginx/serviceControl.js").stop();
+        //require("../lib/arango/serviceControl.js").stop();
         break;
     default:
         break;

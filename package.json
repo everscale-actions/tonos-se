@@ -31,7 +31,10 @@
         "fs-extra": "^9.1.0",
         "https": "^1.0.0",
         "nginx-binaries": "^0.6.1",
+        "node-fetch": "^2.6.1",
         "path": "^0.12.7",
-        "temp": "^0.9.4"
+        "progress": "^2.0.3",
+        "temp": "^0.9.4",
+        "unzipper": "^0.10.11"
     }
 }
