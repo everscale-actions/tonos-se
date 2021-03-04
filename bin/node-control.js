@@ -9,10 +9,10 @@ global.appRoot = path.join(path.resolve(__dirname),"..");
 
 switch (command) {
     case 'start':
-        require("../lib/nginx/start.js").exec();
+        require("../lib/nginx/serviceControl.js").start();
         break;
     case 'stop':
-        require("../lib/nginx/stop.js").exec();
+        require("../lib/nginx/serviceControl.js").stop();
         break;
     default:
         break;
