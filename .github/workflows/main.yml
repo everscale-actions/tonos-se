@@ -1,0 +1,38 @@
+﻿name: Main workflow
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 1 * * *'
+      
+env:
+  TON_NODE: "tonlabs/ton-node"
+  BIN_TARGET: "ton_node_startup"  
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: tonlabs/tonos-se
+          path: tonos-se
+          
+      - name: Build Node image
+        working-directory: tonos-se/ton-node-se
+        run: |
+          docker build --build-arg BIN_TARGET="$BIN_TARGET" --build-arg FEATURES="${1:-disable-tests}" --tag "$TON_NODE" .
+          
+      - name: Copy binaries
+        run: |
+          mkdir -p ton-node/
+          docker create -ti --name node "$TON_NODE"
+          docker cp node:/node/ ton-node/
+          docker rm -f node          
+        
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ton-node
+          path: ton-node/
