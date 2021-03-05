@@ -46,3 +46,11 @@ jobs:
       - name: Build
         run: |
           cargo build --release
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ton_node_startup-${{ matrix.os }}
+          path: |
+            ton-node-se/target/release/ton_node_startup
+            ton-node-se/target/release/ton_node_startup.exe
+          if-no-files-found: error
