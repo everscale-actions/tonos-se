@@ -3,36 +3,46 @@
 on:
   push:
   workflow_dispatch:
-  schedule:
-    - cron:  '0 1 * * *'
-      
-env:
-  TON_NODE: "tonlabs/ton-node"
-  BIN_TARGET: "ton_node_startup"  
-    
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos, windows]
+    runs-on: ${{ matrix.os }}-latest
+
+    defaults:
+      run:
+        working-directory: ton-node-se
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: tonlabs/tonos-se
-          path: tonos-se
-          
-      - name: Build Node image
-        working-directory: tonos-se/ton-node-se
+
+      # - name: Prepare Linux
+      #   if: ${{ matrix.os == 'ubuntu'}}
+      #   working-directory: ton-node-se
+      #   run: |
+      #     sudo apt update && sudo apt install -y cmake pkg-config libssl-dev
+      #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+      # - name: Prepare MacOS
+      #   if: ${{ matrix.os == 'macos'}}
+      #   working-directory: tonos-se/ton-node-se
+      #   run: |
+      #     brew cask install cargo
+      #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+      # - name: Prepare Wrindows
+      #   if: ${{ matrix.os == 'windows'}}
+      #   working-directory: tonos-se/ton-node-se
+      #   run: |
+      #     sudo apt update && sudo apt install -y cmake pkg-config libssl-dev
+      #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+      - name: Build
         run: |
-          docker build --build-arg BIN_TARGET="$BIN_TARGET" --build-arg FEATURES="${1:-disable-tests}" --tag "$TON_NODE" .
-          
-      - name: Copy binaries
-        run: |
-          mkdir -p ton-node/
-          docker create -ti --name node "$TON_NODE"
-          docker cp node:/node/ ton-node/
-          docker rm -f node          
-        
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ton-node
-          path: ton-node/
+          cargo build --release
