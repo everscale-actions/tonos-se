@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-node:
     strategy:
       fail-fast: false
       matrix:
@@ -14,7 +14,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ton-node-se
+        shell: bash
 
     steps:
       - name: Checkout
@@ -22,32 +22,22 @@ jobs:
         with:
           repository: tonlabs/tonos-se
 
-      # - name: Prepare Linux
-      #   if: ${{ matrix.os == 'ubuntu'}}
-      #   working-directory: ton-node-se
-      #   run: |
-      #     sudo apt update && sudo apt install -y cmake pkg-config libssl-dev
-      #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-      # - name: Prepare MacOS
-      #   if: ${{ matrix.os == 'macos'}}
-      #   working-directory: tonos-se/ton-node-se
-      #   run: |
-      #     brew cask install cargo
-      #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-      # - name: Prepare Wrindows
-      #   if: ${{ matrix.os == 'windows'}}
-      #   working-directory: tonos-se/ton-node-se
-      #   run: |
-      #     sudo apt update && sudo apt install -y cmake pkg-config libssl-dev
-      #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ton-node-se/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build
+        working-directory: ton-node-se
         run: |
           cargo build --release
 
-      - uses: actions/upload-artifact@v2
+      - name: Publish artifact
+        uses: actions/upload-artifact@v2
         with:
           name: ton_node_startup-${{ matrix.os }}
           path: |
