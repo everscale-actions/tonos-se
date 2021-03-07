@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   build-node:
     strategy:
@@ -17,26 +20,26 @@ jobs:
         shell: bash
 
     steps:
-      - name: Checkout
+      - name: 🏃 Checkout
         uses: actions/checkout@v2
         with:
           repository: tonlabs/tonos-se
 
-      - name: Restore cache
+      - name: ⚡ Cache
         uses: actions/cache@v2
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             ton-node-se/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo
 
-      - name: Build
+      - name: 🔨 Build
         working-directory: ton-node-se
         run: |
           cargo build --release
 
-      - name: Publish artifact
+      - name: 🐳 Publish
         uses: actions/upload-artifact@v2
         with:
           name: ton_node_startup-${{ matrix.os }}
