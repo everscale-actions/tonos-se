@@ -6,6 +6,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  TONOS_SE_REPO: tonlabs/tonos-se
 
 jobs:
   build-node:
@@ -13,6 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos, windows]
+
     runs-on: ${{ matrix.os }}-latest
 
     defaults:
@@ -23,18 +25,15 @@ jobs:
       - name: 🏃 Checkout
         uses: actions/checkout@v2
         with:
-          repository: tonlabs/tonos-se
+          repository: ${{ env.TONOS_SE_REPO }}
 
-      - name: ⚡ Cache
+      - name: ⚡ Cache cargo
         uses: actions/cache@v2
         with:
           path: |
             ~/.cargo
             ton-node-se/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
-            ${{ runner.os }}-cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.toml') }}
 
       - name: 🔨 Build
         working-directory: ton-node-se
