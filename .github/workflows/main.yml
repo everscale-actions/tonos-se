@@ -29,10 +29,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
+            ~/.cargo
             ton-node-se/target
-          key: ${{ runner.os }}-cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
+            ${{ runner.os }}-cargo
 
       - name: 🔨 Build
         working-directory: ton-node-se
