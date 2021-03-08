@@ -1,7 +1,8 @@
 ﻿name: Main workflow
 
 on:
-  push:
+  schedule:
+    - cron:  '0 0 * * *'
   workflow_dispatch:
     inputs:
       tonos-se-release:
@@ -129,6 +130,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{ env.TONOS_SE_RELEASE }}"
           prerelease: false
-          draft: true
           title: "TONOS Node SE binaries ${{ env.TONOS_SE_RELEASE }}"
           files: artifact/**/node-*.zip
