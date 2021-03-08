@@ -3,48 +3,132 @@
 on:
   push:
   workflow_dispatch:
-
+    inputs:
+      tonos-se-release:
+        description: 'TONOS SE Release'
+        required: false        
 env:
-  CARGO_TERM_COLOR: always
-  TONOS_SE_REPO: tonlabs/tonos-se
-
-jobs:
+  TONOS_SE_OWNER: tonlabs
+  TONOS_SE_REPO: tonos-se
+jobs:  
+  find-release:
+    name: Find Node SE release
+    runs-on: ubuntu-latest
+    outputs:
+      tonos-se-release: ${{ steps.find-tonos-release.outputs.result }}
+    steps:
+      - uses: actions/github-script@v3
+        id: find-tonos-release
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const releaseInput = '${{ github.event.inputs.tonos-se-release }}';
+            if (releaseInput) {
+              core.info(`Use release by input ${releaseInput}`);
+              return releaseInput; 
+            }
+            const { data: { tag_name: tonosSeRelease}} = await github.request("GET /repos/{owner}/{repo}/releases/latest", { owner: process.env.TONOS_SE_OWNER, repo: process.env.TONOS_SE_REPO });
+            const { data: data } = await github.request("GET /repos/{owner}/{repo}/releases", { owner: context.repo.owner, repo: context.repo.repo });
+            const binariesReleases = data.map(r=>r.tag_name);   
+            if(!binariesReleases.includes(tonosSeRelease)){
+              core.info(`New release ${tonosSeRelease} detected!`);
+              return tonosSeRelease;
+            } 
+            core.warning('No new releases found');
+            return '';
   build-node:
+    name: Build Node SE ${{ needs.find-release.outputs.tonos-se-release }} ${{ matrix.os }}
+    needs: find-release
+    if: ${{ needs.find-release.outputs.tonos-se-release  != '' }}
+    env:
+      TONOS_SE_RELEASE: ${{ needs.find-release.outputs.tonos-se-release }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu, macos, windows]
-
     runs-on: ${{ matrix.os }}-latest
-
     defaults:
       run:
         shell: bash
-
     steps:
       - name: 🏃 Checkout
         uses: actions/checkout@v2
         with:
-          repository: ${{ env.TONOS_SE_REPO }}
+          repository: ${{ env.TONOS_SE_OWNER }}/${{ env.TONOS_SE_REPO }}
+          ref: ${{ env.TONOS_SE_RELEASE }}
+
+      - name: 🔨 Generate Cargo.lock
+        working-directory: ton-node-se
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo generate-lockfile
 
       - name: ⚡ Cache cargo
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.cargo
-            ton-node-se/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.toml') }}
+          path: ~/.cargo
+          key: |
+            ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
+            ${{ runner.os }}-cargo  
+
+      - name: ⚡ Cache target
+        uses: actions/cache@v2
+        with:
+          path: ton-node-se/target
+          key: |
+            ${{ runner.os }}-cargo-target-${{ hashFiles('ton-node-se/Cargo.lock') }}
+            ${{ runner.os }}-cargo-target           
 
       - name: 🔨 Build
         working-directory: ton-node-se
-        run: |
-          cargo build --release
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo build --release
 
-      - name: 🐳 Publish
+      - name: 🔨 Generate .publish
+        run: |
+          mkdir -p .publish
+          if [ -f "ton-node-se/target/release/ton_node_startup" ]; then cp ton-node-se/target/release/ton_node_startup .publish; fi
+          if [ -f "ton-node-se/target/release/ton_node_startup.exe" ]; then cp ton-node-se/target/release/ton_node_startup.exe .publish; fi          
+          cp ton-node-se/config/log_cfg.yml .publish
+          cp ton-node-se/config/cfg_startup .publish
+          cp ton-node-se/config/key01 .publish
+          cp ton-node-se/config/pub01 .publish     
+
+      - name: ⚡ Create release artifact
+        uses: papeloto/action-zip@v1
+        with:
+          files: .publish
+          dest: node-${{ env.TONOS_SE_RELEASE }}-${{ matrix.os }}.zip
+
+      - name: 📚 Publish release artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ton_node_startup-${{ matrix.os }}
-          path: |
-            ton-node-se/target/release/ton_node_startup
-            ton-node-se/target/release/ton_node_startup.exe
-          if-no-files-found: error
+          name: node-${{ env.TONOS_SE_RELEASE }}-${{ matrix.os }}
+          path: node-${{ env.TONOS_SE_RELEASE }}-${{ matrix.os }}.zip
+          if-no-files-found: error  
+
+  publish:
+    name: Create Release ${{ needs.find-release.outputs.tonos-se-release }}
+    env:
+      TONOS_SE_RELEASE: ${{ needs.find-release.outputs.tonos-se-release }}    
+    runs-on: ubuntu-latest  
+    needs:
+      - build-node
+      - find-release
+    steps: 
+      - name: 🎣 Download all workflow run artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifact
+
+      - name: 🍸 Publish release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ env.TONOS_SE_RELEASE }}"
+          prerelease: false
+          draft: true
+          title: "TONOS Node SE binaries ${{ env.TONOS_SE_RELEASE }}"
+          files: artifact/**/node-*.zip
