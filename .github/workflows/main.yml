@@ -27,10 +27,46 @@ jobs:
           repository: ${{ env.TONOS_SE_OWNER }}/${{ env.TONOS_SE_REPO }}
           ref: ${{ env.TONOS_SE_VERSION }}
 
-      - name: 'Tar files'
+      - name: 🔨 Generate Cargo.lock
+        working-directory: ton-node-se
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo generate-lockfile
+
+      - name: ⚡ Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo
+          key: |
+            ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
+            ${{ runner.os }}-cargo
+
+      - name: ⚡ Cache target
+        uses: actions/cache@v2
+        with:
+          path: ton-node-se/target
+          key: |
+            ${{ runner.os }}-cargo-target-${{ hashFiles('ton-node-se/Cargo.lock') }}
+            ${{ runner.os }}-cargo-target
+
+      - name: 🔨 Build
+        working-directory: ton-node-se
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo build --release
+
+      - name: 🔨 Generate node folder
         run: |
           mkdir -p ${{ env.PUBLISH_FOLDER }}
-          touch ${{ env.PUBLISH_FOLDER }}/test.txt
+          if [ -f "ton-node-se/target/release/ton_node_startup" ]; then cp ton-node-se/target/release/ton_node_startup ${{ env.PUBLISH_FOLDER }}; fi
+          if [ -f "ton-node-se/target/release/ton_node_startup.exe" ]; then cp ton-node-se/target/release/ton_node_startup.exe ${{ env.PUBLISH_FOLDER }}; fi          
+          cp ton-node-se/config/log_cfg.yml ${{ env.PUBLISH_FOLDER }}
+          cp ton-node-se/config/cfg_startup ${{ env.PUBLISH_FOLDER }}
+          cp ton-node-se/config/key01 ${{ env.PUBLISH_FOLDER }}
+          cp ton-node-se/config/pub01 ${{ env.PUBLISH_FOLDER }}
+
+      - name: 'Tar files'
+        run: |
           tar -cvf node-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
 
       - name: 📚 Publish artifact
