@@ -8,6 +8,8 @@ env:
   TONOS_SE_VERSION: 0.25.0
 jobs:
   build-node:
+    env: 
+      PUBLISH_FOLDER: node
     name: Build Node SE ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -53,8 +55,6 @@ jobs:
         run: cargo build --release
 
       - name: 🔨 Generate node folder
-        env:
-          PUBLISH_FOLDER: node
         run: |
           mkdir -p ${{ env.PUBLISH_FOLDER }}
           if [ -f "ton-node-se/target/release/ton_node_startup" ]; then cp ton-node-se/target/release/ton_node_startup ${{ env.PUBLISH_FOLDER }}; fi
@@ -72,11 +72,65 @@ jobs:
         with:
           name: node-${{ matrix.os }}
           path: node-${{ matrix.os }}.tar
-          if-no-files-found: error           
-          
+          if-no-files-found: error  
+
+  build-arango:
+    env:
+      PUBLISH_FOLDER: arangodb
+      ARANGODB_VERSION: 3.7.9
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        os: [ubuntu, macos, windows]
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout current repo
+          uses: actions/checkout@v2
+
+        - name: Load parameters
+          uses: actions/github-script@v3.1.0
+          with:
+            script: |
+              const config = require(`${process.env.GITHUB_WORKSPACE}/config.arango.js`)(`${process.env.ARANGODB_VERSION}`)
+              core.exportVariable('PATH_IN_ARCHIVE', config["${{ matrix.os }}"].pathInArchive)
+              core.exportVariable('URL', config["${{ matrix.os }}"].url)
+
+        - name: Download and unpack
+          uses: nrukavkov/configurator@v0.0.8
+          with:
+            name: "arango"
+            url: ${{env.URL}}
+            pathInArchive: ${{env.PATH_IN_ARCHIVE}}
+
+        - name: Checkout tonos-se
+          uses: actions/checkout@v2
+          with:
+            path: tonos-se
+            repository: 'tonlabs/tonos-se'
+        
+        - name: Create structure and copy additional files
+          run: |
+            mv .configurator/arango ./${{ env.PUBLISH_FOLDER }}
+            mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3-apps
+            mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3
+            cp -r tonos-se/docker/arango/initdb.d ${{ env.PUBLISH_FOLDER }}/initdb.d
+        
+        - name: 'Tar files'
+          run: tar -cvf arango-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
+
+        - name: 📚 Publish artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: arango-${{ matrix.os }}
+            path: arango-${{ matrix.os }}.tar
+            if-no-files-found: error  
+  
   prepare-artifacts:
     needs:
       - build-node
+      - build-arango
     strategy:
       fail-fast: false
       matrix:
@@ -119,4 +173,4 @@ jobs:
           automatic_release_tag: "${{ env.TONOS_SE_VERSION }}"
           prerelease: false
           title: "Node SE binaries ${{ env.TONOS_SE_VERSION }}"
-          files: artifacts/release-*.zip
+          files: artifacts/release-*.tar
