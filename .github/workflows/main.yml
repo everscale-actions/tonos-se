@@ -87,47 +87,47 @@ jobs:
         os: [ubuntu, macos, windows]
     runs-on: ubuntu-latest
     steps:
-        - name: Checkout current repo
-          uses: actions/checkout@v2
+      - name: Checkout current repo
+        uses: actions/checkout@v2
 
-        - name: Load parameters
-          uses: actions/github-script@v3.1.0
-          with:
-            script: |
-              const config = require(`${process.env.GITHUB_WORKSPACE}/config.arangodb.js`)(`${process.env.ARANGODB_VERSION}`)
-              core.exportVariable('PATH_IN_ARCHIVE', config["${{ matrix.os }}"].pathInArchive)
-              core.exportVariable('URL', config["${{ matrix.os }}"].url)
+      - name: Load parameters
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            const config = require(`${process.env.GITHUB_WORKSPACE}/config.arangodb.js`)(`${process.env.ARANGODB_VERSION}`)
+            core.exportVariable('PATH_IN_ARCHIVE', config["${{ matrix.os }}"].pathInArchive)
+            core.exportVariable('URL', config["${{ matrix.os }}"].url)
 
-        - name: Download and unpack
-          uses: nrukavkov/configurator@v0.0.8
-          with:
-            name: "arangodb"
-            url: ${{env.URL}}
-            pathInArchive: ${{env.PATH_IN_ARCHIVE}}
+      - name: Download and unpack
+        uses: nrukavkov/configurator@v0.0.8
+        with:
+          name: "arangodb"
+          url: ${{env.URL}}
+          pathInArchive: ${{env.PATH_IN_ARCHIVE}}
 
-        - name: Checkout tonos-se
-          uses: actions/checkout@v2
-          with:
-            path: tonos-se
-            repository: 'tonlabs/tonos-se'
-        
-        - name: Create structure and copy additional files
-          run: |
-            mv .configurator/arangodb ./${{ env.PUBLISH_FOLDER }}
-            mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3-apps
-            mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3
-            cp -r tonos-se/docker/arango/initdb.d ${{ env.PUBLISH_FOLDER }}/initdb.d
-        
-        - name: 'Tar files'
-          run: tar -cvf arangodb-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
+      - name: Checkout tonos-se
+        uses: actions/checkout@v2
+        with:
+          path: tonos-se
+          repository: 'tonlabs/tonos-se'
+      
+      - name: Create structure and copy additional files
+        run: |
+          mv .configurator/arangodb ./${{ env.PUBLISH_FOLDER }}
+          mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3-apps
+          mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3
+          cp -r tonos-se/docker/arango/initdb.d ${{ env.PUBLISH_FOLDER }}/initdb.d
+      
+      - name: 'Tar files'
+        run: tar -cvf arangodb-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
 
-        - name: 📚 Publish artifact
-          uses: actions/upload-artifact@v2
-          with:
-            name: arangodb-${{ matrix.os }}
-            path: arangodb-${{ matrix.os }}.tar
-            if-no-files-found: error  
-  
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: arangodb-${{ matrix.os }}
+          path: arangodb-${{ matrix.os }}.tar
+          if-no-files-found: error  
+
   prepare-artifacts:
     needs:
       - build-node
