@@ -7,8 +7,7 @@ env:
   ARANGODB_VERSION: 3.7.9
   TON_Q_SERVER_VERSION: 0.34.0
 jobs:
-  build-node:
-    name: Build Node SE ${{ matrix.os }}
+  build-node-se:
     strategy:
       fail-fast: false
       matrix:
@@ -146,7 +145,7 @@ jobs:
 
   prepare-artifacts:
     needs:
-      - build-node
+      - build-node-se
       - build-arango
       - build-q-server 
     runs-on: ubuntu-latest
