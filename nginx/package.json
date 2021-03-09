@@ -1,0 +1,16 @@
+{
+  "name": "nginx",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "download": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nginx-binaries": "^0.6.1",
+    "os": "^0.1.1",
+    "path": "^0.12.7"
+  }
+}

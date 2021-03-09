@@ -6,6 +6,7 @@ env:
   TONOS_SE_VERSION: 0.25.0
   ARANGODB_VERSION: 3.7.9
   TON_Q_SERVER_VERSION: 0.34.0
+  NGINX_VERSION: 1.19.7
 jobs:
   build-node-se:
     strategy:
@@ -142,12 +143,34 @@ jobs:
           name: q-server
           path: q-server.tar
           if-no-files-found: error
+          
+  build-nginx:
+    strategy:
+      matrix:
+        os: [ ubuntu, macos, windows ]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Download nginx
+        working-directory: nginx
+        run: |
+          npm install
+          npm run download
+      - run: tar -cvf nginx-${{ matrix.os }}.tar nginx/nginx
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: nginx-${{ matrix.os }}
+          path: nginx-${{ matrix.os }}.tar
+          if-no-files-found: error       
 
   prepare-artifacts:
     needs:
       - build-node-se
       - build-arango
       - build-q-server 
+      - build-nginx
     runs-on: ubuntu-latest
     steps:
       - name: 🎣 Download all workflow run artifacts
@@ -179,6 +202,7 @@ jobs:
             ls **/node-$i.tar
             tar --concatenate --file=release-$i.tar arango-$i/arango-$i.tar
             tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
+            tar --concatenate --file=release-$i.tar nginx-$i/nginx-$i.tar
             tar --concatenate --file=release-$i.tar q-server/q-server.tar
             tar --concatenate --file=release-$i.tar ${{ github.workspace }}/config.tar
             gzip release-$i.tar
