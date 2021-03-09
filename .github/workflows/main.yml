@@ -145,8 +145,7 @@ jobs:
       - name: 'Merge tar files'
         working-directory: artifacts
         run: |
-          tar -cf release-${{ matrix.os }}.tar -T /dev/null
-          tar --concatenate --file=release-${{ matrix.os }}.tar node-${{ matrix.os }}.tar
+          tar --concatenate --file=release-${{ matrix.os }}.tar node-${{ matrix.os }}.tar arango-${{ matrix.os }}.tar
           
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
