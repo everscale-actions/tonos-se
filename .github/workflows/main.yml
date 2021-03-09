@@ -64,16 +64,9 @@ jobs:
             cp ton-node-se/target/release/ton_node_startup.exe ton-node
           else 
             cp ton-node-se/target/release/ton_node_startup ton-node
-            chmod +x node/ton_node_startup
+            chmod +x ton-node/ton_node_startup
           fi
-          tar -cvf node-${{ matrix.os }}.tar ton-node
-
-      - name: 📚 Publish artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ton-node-${{ matrix.os }}
-          path: ton-node-${{ matrix.os }}.tar
-          if-no-files-found: error
+          tar -cvf ton-node-${{ matrix.os }}.tar ton-node
           
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
@@ -198,8 +191,6 @@ jobs:
           for i in "${arr[@]}"
           do
             echo "Creating archive release-$i.tar.gz"
-            ls **/arango-$i.tar
-            ls **/node-$i.tar
             tar --concatenate --file=release-$i.tar arango-$i/arango-$i.tar
             tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
             tar --concatenate --file=release-$i.tar nginx-$i/nginx-$i.tar
