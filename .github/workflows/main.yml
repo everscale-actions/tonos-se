@@ -3,14 +3,10 @@
 on: [ push ]  
 
 env:
-  TONOS_SE_OWNER: tonlabs
-  TONOS_SE_REPO: tonos-se
   TONOS_SE_VERSION: 0.25.0
   ARANGODB_VERSION: 3.7.9
 jobs:
   build-node:
-    env: 
-      PUBLISH_FOLDER: node
     name: Build Node SE ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -21,12 +17,12 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: 🏃 Checkout
+      - name: Checkout tonos-se
         uses: actions/checkout@v2
         with:
-          repository: ${{ env.TONOS_SE_OWNER }}/${{ env.TONOS_SE_REPO }}
+          repository: 'tonlabs/tonos-se'
           ref: ${{ env.TONOS_SE_VERSION }}
-
+          
       - name: ⚡ Cache cargo
         uses: actions/cache@v2
         with:
@@ -60,30 +56,25 @@ jobs:
           CARGO_TERM_COLOR: always
         run: cargo build --release
 
-      - name: 🔨 Generate node folder
+      - name: 🔨 TAR node binaries
         run: |
-          mkdir -p ${{ env.PUBLISH_FOLDER }}
-          if [ -f "ton-node-se/target/release/ton_node_startup" ]; then cp ton-node-se/target/release/ton_node_startup ${{ env.PUBLISH_FOLDER }}; fi
-          if [ -f "ton-node-se/target/release/ton_node_startup.exe" ]; then cp ton-node-se/target/release/ton_node_startup.exe ${{ env.PUBLISH_FOLDER }}; fi          
-          cp ton-node-se/config/log_cfg.yml ${{ env.PUBLISH_FOLDER }}
-          cp ton-node-se/config/cfg_startup ${{ env.PUBLISH_FOLDER }}
-          cp ton-node-se/config/key01 ${{ env.PUBLISH_FOLDER }}
-          cp ton-node-se/config/pub01 ${{ env.PUBLISH_FOLDER }}
-
-      - name: 'Tar files'
-        run: |
-          tar -cvf node-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
+          mkdir -p ton-node
+          if [[ "${{ runner.os }}" == 'Windows' ]]; then
+            cp ton-node-se/target/release/ton_node_startup.exe ton-node
+          else 
+            cp ton-node-se/target/release/ton_node_startup ton-node
+            chmod +x node/ton_node_startup
+          fi
+          tar -cvf node-${{ matrix.os }}.tar ton-node
 
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: node-${{ matrix.os }}
-          path: node-${{ matrix.os }}.tar
+          name: ton-node-${{ matrix.os }}
+          path: ton-node-${{ matrix.os }}.tar
           if-no-files-found: error  
 
   build-arango:
-    env:
-      PUBLISH_FOLDER: arangodb      
     defaults:
       run:
         shell: bash
@@ -106,46 +97,48 @@ jobs:
       - name: Download and unpack
         uses: nrukavkov/configurator@v0.0.8
         with:
-          name: "arangodb"
+          name: arango
           url: ${{env.URL}}
           pathInArchive: ${{env.PATH_IN_ARCHIVE}}
 
-      - name: Checkout tonos-se
-        uses: actions/checkout@v2
-        with:
-          path: tonos-se
-          repository: 'tonlabs/tonos-se'
-      
-      - name: Create structure and copy additional files
+      - name: TAR arangodb binaries
         run: |
-          mv .configurator/arangodb ./${{ env.PUBLISH_FOLDER }}
-          mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3-apps
-          mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3
-          cp -r tonos-se/docker/arango/initdb.d ${{ env.PUBLISH_FOLDER }}/initdb.d
+          mv .configurator/arango ./arango
+          mkdir -p arango/var/lib/arangodb3-apps
+          mkdir -p arango/var/lib/arangodb3          
+          tar -cvf arango-${{ matrix.os }}.tar arango
       
-      - name: 'Tar files'
-        run: tar -cvf arangodb-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
-
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: arangodb-${{ matrix.os }}
-          path: arangodb-${{ matrix.os }}.tar
+          name: arango-${{ matrix.os }}
+          path: arango-${{ matrix.os }}.tar
           if-no-files-found: error  
 
   prepare-artifacts:
     needs:
       - build-node
       - build-arango
-    strategy:
-      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - name: 🎣 Download all workflow run artifacts
         uses: actions/download-artifact@v2
         with:
-          path: artifacts        
-        
+          path: artifacts
+          
+      - name: Checkout tonos-se
+        uses: actions/checkout@v2
+        with:
+          path: tonos-se
+          repository: 'tonlabs/tonos-se'
+          ref: ${{ env.TONOS_SE_VERSION }}
+
+      - name: Copy additional files from tonos-se repos
+        run: |
+          mkdir -p configs
+          cp -r tonos-se/docker configs/
+          tar -cvf config.tar configs
+          
       - name: 'Merge tar files'
         working-directory: artifacts
         run: |
@@ -153,10 +146,11 @@ jobs:
           for i in "${arr[@]}"
           do
             echo "Creating archive release-$i.tar.gz"
-            ls **/arangodb-$i.tar
+            ls **/arango-$i.tar
             ls **/node-$i.tar
-            tar --concatenate --file=release-$i.tar arangodb-$i/arangodb-$i.tar
-            tar --concatenate --file=release-$i.tar node-$i/node-$i.tar
+            tar --concatenate --file=release-$i.tar arango-$i/arango-$i.tar
+            tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
+            tar --concatenate --file=release-$i.tar ${{ github.workspace }}/config.tar
             gzip release-$i.tar
           done
            
