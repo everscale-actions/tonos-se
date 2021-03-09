@@ -6,6 +6,7 @@ env:
   TONOS_SE_OWNER: tonlabs
   TONOS_SE_REPO: tonos-se
   TONOS_SE_VERSION: 0.25.0
+  ARANGODB_VERSION: 3.7.9
 jobs:
   build-node:
     env: 
@@ -41,8 +42,7 @@ jobs:
 
   build-arango:
     env:
-      PUBLISH_FOLDER: arangodb
-      ARANGODB_VERSION: 3.7.9
+      PUBLISH_FOLDER: arangodb      
     defaults:
       run:
         shell: bash
