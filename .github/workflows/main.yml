@@ -26,46 +26,11 @@ jobs:
           repository: ${{ env.TONOS_SE_OWNER }}/${{ env.TONOS_SE_REPO }}
           ref: ${{ env.TONOS_SE_VERSION }}
 
-      - name: 🔨 Generate Cargo.lock
-        working-directory: ton-node-se
-        env:
-          CARGO_TERM_COLOR: always
-        run: cargo generate-lockfile
-
-      - name: ⚡ Cache cargo
-        uses: actions/cache@v2
-        with:
-          path: ~/.cargo
-          key: |
-            ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
-            ${{ runner.os }}-cargo
-
-      - name: ⚡ Cache target
-        uses: actions/cache@v2
-        with:
-          path: ton-node-se/target
-          key: |
-            ${{ runner.os }}-cargo-target-${{ hashFiles('ton-node-se/Cargo.lock') }}
-            ${{ runner.os }}-cargo-target
-
-      - name: 🔨 Build
-        working-directory: ton-node-se
-        env:
-          CARGO_TERM_COLOR: always
-        run: cargo build --release
-
-      - name: 🔨 Generate node folder
+      - name: 'Tar files'
         run: |
           mkdir -p ${{ env.PUBLISH_FOLDER }}
-          if [ -f "ton-node-se/target/release/ton_node_startup" ]; then cp ton-node-se/target/release/ton_node_startup ${{ env.PUBLISH_FOLDER }}; fi
-          if [ -f "ton-node-se/target/release/ton_node_startup.exe" ]; then cp ton-node-se/target/release/ton_node_startup.exe ${{ env.PUBLISH_FOLDER }}; fi          
-          cp ton-node-se/config/log_cfg.yml ${{ env.PUBLISH_FOLDER }}
-          cp ton-node-se/config/cfg_startup ${{ env.PUBLISH_FOLDER }}
-          cp ton-node-se/config/key01 ${{ env.PUBLISH_FOLDER }}
-          cp ton-node-se/config/pub01 ${{ env.PUBLISH_FOLDER }}
-
-      - name: 'Tar files'
-        run: tar -cvf node-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
+          touch ${{ env.PUBLISH_FOLDER }}/test.txt
+          tar -cvf node-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
 
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
@@ -93,14 +58,14 @@ jobs:
           uses: actions/github-script@v3.1.0
           with:
             script: |
-              const config = require(`${process.env.GITHUB_WORKSPACE}/config.arango.js`)(`${process.env.ARANGODB_VERSION}`)
+              const config = require(`${process.env.GITHUB_WORKSPACE}/config.arangodb.js`)(`${process.env.ARANGODB_VERSION}`)
               core.exportVariable('PATH_IN_ARCHIVE', config["${{ matrix.os }}"].pathInArchive)
               core.exportVariable('URL', config["${{ matrix.os }}"].url)
 
         - name: Download and unpack
           uses: nrukavkov/configurator@v0.0.8
           with:
-            name: "arango"
+            name: "arangodb"
             url: ${{env.URL}}
             pathInArchive: ${{env.PATH_IN_ARCHIVE}}
 
@@ -112,19 +77,19 @@ jobs:
         
         - name: Create structure and copy additional files
           run: |
-            mv .configurator/arango ./${{ env.PUBLISH_FOLDER }}
+            mv .configurator/arangodb ./${{ env.PUBLISH_FOLDER }}
             mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3-apps
             mkdir -p ${{ env.PUBLISH_FOLDER }}/var/lib/arangodb3
             cp -r tonos-se/docker/arango/initdb.d ${{ env.PUBLISH_FOLDER }}/initdb.d
         
         - name: 'Tar files'
-          run: tar -cvf arango-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
+          run: tar -cvf arangodb-${{ matrix.os }}.tar ${{ env.PUBLISH_FOLDER }}
 
         - name: 📚 Publish artifact
           uses: actions/upload-artifact@v2
           with:
-            name: arango-${{ matrix.os }}
-            path: arango-${{ matrix.os }}.tar
+            name: arangodb-${{ matrix.os }}
+            path: arangodb-${{ matrix.os }}.tar
             if-no-files-found: error  
   
   prepare-artifacts:
@@ -133,8 +98,6 @@ jobs:
       - build-arango
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu, macos, windows]
     runs-on: ubuntu-latest
     steps:
       - name: 🎣 Download all workflow run artifacts
@@ -145,13 +108,22 @@ jobs:
       - name: 'Merge tar files'
         working-directory: artifacts
         run: |
-          tar --concatenate --file=release-${{ matrix.os }}.tar node-${{ matrix.os }}.tar arango-${{ matrix.os }}.tar
-          
+          declare -a arr=("ubuntu" "windows" "macos")
+          for i in "${arr[@]}"
+          do
+            echo "Creating archive release-$i.tar.gz"
+            ls **/arangodb-$i.tar
+            ls **/node-$i.tar
+            tar --concatenate --file=release-$i.tar arangodb-$i/arangodb-$i.tar
+            tar --concatenate --file=release-$i.tar node-$i/node-$i.tar
+            gzip release-$i.tar
+          done
+           
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:          
-          name: release-${{ matrix.os }}
-          path: artifacts/release-${{ matrix.os }}.tar
+          name: release
+          path: artifacts/release-*.tar.gz
           if-no-files-found: error
 
   publish:
@@ -160,10 +132,11 @@ jobs:
     needs:
       - prepare-artifacts
     steps: 
-      - name: 🎣 Download all workflow run artifacts
+      - name: 🎣 Download release artifacts
         uses: actions/download-artifact@v2
         with:
           path: artifacts
+          name: release
    
       - name: 🍸 Publish release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -172,4 +145,4 @@ jobs:
           automatic_release_tag: "${{ env.TONOS_SE_VERSION }}"
           prerelease: false
           title: "Node SE binaries ${{ env.TONOS_SE_VERSION }}"
-          files: artifacts/release-*.tar
+          files: artifacts/**/release-*.tar.gz
