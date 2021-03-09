@@ -26,18 +26,31 @@ jobs:
           script: |
             const releaseInput = '${{ github.event.inputs.tonos-se-release }}';
             if (releaseInput) {
-              core.info(`Use release by input ${releaseInput}`);
-              return releaseInput; 
+                core.info(`Use release by input ${releaseInput}`);
+                return releaseInput;
             }
-            const { data: { tag_name: tonosSeRelease}} = await github.request("GET /repos/{owner}/{repo}/releases/latest", { owner: process.env.TONOS_SE_OWNER, repo: process.env.TONOS_SE_REPO });
-            const { data: data } = await github.request("GET /repos/{owner}/{repo}/releases", { owner: context.repo.owner, repo: context.repo.repo });
-            const binariesReleases = data.map(r=>r.tag_name);   
-            if(!binariesReleases.includes(tonosSeRelease)){
-              core.info(`New release ${tonosSeRelease} detected!`);
-              return tonosSeRelease;
-            } 
+            const {
+                data: {
+                    tag_name: tonosSeRelease
+                }
+            } = await github.request("GET /repos/{owner}/{repo}/releases/latest", {
+                owner: process.env.TONOS_SE_OWNER,
+                repo: process.env.TONOS_SE_REPO
+            });
+            const {
+                data: data
+            } = await github.request("GET /repos/{owner}/{repo}/releases", {
+                owner: context.repo.owner,
+                repo: context.repo.repo
+            });
+            const binariesReleases = data.map(r => r.tag_name);
+            if (!binariesReleases.includes(tonosSeRelease)) {
+                core.info(`New release ${tonosSeRelease} detected!`);
+                return tonosSeRelease;
+            }
             core.warning('No new releases found');
             return '';
+
   build-node:
     name: Build Node SE ${{ needs.find-release.outputs.tonos-se-release }} ${{ matrix.os }}
     needs: find-release
@@ -71,7 +84,7 @@ jobs:
           path: ~/.cargo
           key: |
             ${{ runner.os }}-cargo-${{ hashFiles('ton-node-se/Cargo.lock') }}
-            ${{ runner.os }}-cargo  
+            ${{ runner.os }}-cargo
 
       - name: ⚡ Cache target
         uses: actions/cache@v2
@@ -79,7 +92,7 @@ jobs:
           path: ton-node-se/target
           key: |
             ${{ runner.os }}-cargo-target-${{ hashFiles('ton-node-se/Cargo.lock') }}
-            ${{ runner.os }}-cargo-target           
+            ${{ runner.os }}-cargo-target
 
       - name: 🔨 Build
         working-directory: ton-node-se
