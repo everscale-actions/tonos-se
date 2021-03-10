@@ -2,9 +2,13 @@
 
 on:
   push:
+    paths-ignore:
+      - '.github/workflows/clean-artifacts.yml'
     branches:
       - main
   pull_request:
+    paths-ignore:
+      - '.github/workflows/clean-artifacts.yml'    
     branches:
       - main
 
