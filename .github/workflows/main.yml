@@ -11,6 +11,7 @@ on:
       - '.github/workflows/clean-artifacts.yml'    
     branches:
       - main
+  workflow_dispatch:
 
 env:
   TONOS_SE_VERSION: 0.25.0
