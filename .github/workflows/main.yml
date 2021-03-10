@@ -16,7 +16,6 @@ env:
 jobs:
   build-node-se:
     strategy:
-      fail-fast: false
       matrix:
         os: [ubuntu, macos, windows]
     runs-on: ${{ matrix.os }}-latest
