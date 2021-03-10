@@ -76,13 +76,13 @@ jobs:
             cp ton-node-se/target/release/ton_node_startup ton-node
             chmod +x ton-node/ton_node_startup
           fi
-          tar -cvf ton-node-${{ matrix.os }}.tar ton-node
+          tar -cvf ton-node-${{ runner.os }}.tar ton-node
           
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ton-node-${{ matrix.os }}
-          path: ton-node-${{ matrix.os }}.tar
+          name: ton-node-${{ runner.os }}
+          path: ton-node-${{ runner.os }}.tar
           if-no-files-found: error
 
   build-arango:
@@ -117,13 +117,13 @@ jobs:
           mv .configurator/arango ./arango
           mkdir -p arango/var/lib/arangodb3-apps
           mkdir -p arango/var/lib/arangodb3          
-          tar -cvf arango-${{ matrix.os }}.tar arango
+          tar -cvf arango-${{ runner.os }}.tar arango
       
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: arango-${{ matrix.os }}
-          path: arango-${{ matrix.os }}.tar
+          name: arango-${{ runner.os }}
+          path: arango-${{ runner.os }}.tar
           if-no-files-found: error
           
   build-q-server:
@@ -160,12 +160,12 @@ jobs:
         run: |
           npm install
           npm run download
-      - run: tar -C nginx -cvf nginx-${{ matrix.os }}.tar nginx
+      - run: tar -C nginx -cvf nginx-${{ runner.os }}.tar nginx
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: nginx-${{ matrix.os }}
-          path: nginx-${{ matrix.os }}.tar
+          name: nginx-${{ runner.os }}
+          path: nginx-${{ runner.os }}.tar
           if-no-files-found: error       
           
   build-configs:
