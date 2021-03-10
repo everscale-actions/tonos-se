@@ -172,7 +172,7 @@ jobs:
         run: |
           mkdir -p configs
           cp -r tonos-se/docker/* configs/
-          tar -C configs -cvf configs.tar .
+          tar -C configs -cvf configs.tar `cd configs; ls -A`
           
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
