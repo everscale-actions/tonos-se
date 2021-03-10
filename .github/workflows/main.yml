@@ -170,9 +170,13 @@ jobs:
 
       - name: Copy additional files from tonos-se repos
         run: |
-          mkdir -p configs
+          mkdir -p configs          
           cp -r tonos-se/docker/* configs/
-          tar -C configs -cvf configs.tar `cd configs; ls -A`
+          cd configs
+          mkdir -p nginx/conf
+          mv nginx.conf.d nginx/conf
+          rm Dockerfile
+          tar -cvf ../configs.tar `ls -A`
           
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
