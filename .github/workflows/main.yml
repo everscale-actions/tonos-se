@@ -1,6 +1,12 @@
 ﻿name: Main workflow
 
-on: [ push ]  
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 env:
   TONOS_SE_VERSION: 0.25.0
@@ -239,5 +245,6 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{ env.TONOS_SE_VERSION }}"
           prerelease: false
+          draft: ${{ github.event_name == 'pull_request' }}
           title: "Node SE binaries ${{ env.TONOS_SE_VERSION }}"
           files: artifacts/**/release-*.tar.gz
