@@ -157,20 +157,10 @@ jobs:
           name: nginx-${{ matrix.os }}
           path: nginx-${{ matrix.os }}.tar
           if-no-files-found: error       
-
-  prepare-artifacts:
-    needs:
-      - build-node-se
-      - build-arango
-      - build-q-server 
-      - build-nginx
+          
+  build-configs:
     runs-on: ubuntu-latest
     steps:
-      - name: 🎣 Download all workflow run artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
-          
       - name: Checkout tonos-se
         uses: actions/checkout@v2
         with:
@@ -184,6 +174,27 @@ jobs:
           cp -r tonos-se/docker/* configs/
           tar -C configs -cvf configs.tar .
           
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: configs
+          path: configs.tar
+          if-no-files-found: error
+
+  prepare-artifacts:
+    needs:
+      - build-node-se
+      - build-arango
+      - build-q-server 
+      - build-nginx
+      - build-configs
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🎣 Download all workflow run artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+          
       - name: 'Merge tar files'
         working-directory: artifacts
         run: |
@@ -195,7 +206,7 @@ jobs:
             tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
             tar --concatenate --file=release-$i.tar nginx-$i/nginx-$i.tar
             tar --concatenate --file=release-$i.tar q-server/q-server.tar
-            tar --concatenate --file=release-$i.tar ${{ github.workspace }}/configs.tar
+            tar --concatenate --file=release-$i.tar configs/configs.tar
             gzip release-$i.tar
           done
            
