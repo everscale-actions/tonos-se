@@ -91,7 +91,7 @@ jobs:
         shell: bash
     strategy:
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [Linux, Windows, macOS]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current repo
@@ -117,13 +117,13 @@ jobs:
           mv .configurator/arango ./arango
           mkdir -p arango/var/lib/arangodb3-apps
           mkdir -p arango/var/lib/arangodb3          
-          tar -cvf arango-${{ runner.os }}.tar arango
+          tar -cvf arango-${{ matrix.os }}.tar arango
       
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: arango-${{ runner.os }}
-          path: arango-${{ runner.os }}.tar
+          name: arango-${{ matrix.os }}
+          path: arango-${{ matrix.os }}.tar
           if-no-files-found: error
           
   build-q-server:
@@ -212,7 +212,7 @@ jobs:
       - name: 'Merge tar files'
         working-directory: artifacts
         run: |
-          declare -a arr=("ubuntu" "windows" "macos")
+          declare -a arr=("Linux" "Windows" "macOS")
           for i in "${arr[@]}"
           do
             echo "Creating archive release-$i.tar.gz"
