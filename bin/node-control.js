@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('dotenv').config()
 var args = process.argv.splice(process.execArgv.length + 2);
 
 command = args[0];
@@ -9,11 +10,12 @@ global.appRoot = path.join(path.resolve(__dirname),"..");
 
 switch (command) {
     case 'start':
-        require("../lib/nginx/serviceControl.js").start();
-        require("../lib/arango/serviceControl.js").start();
+        //check if .server exists
+        require("../lib/serverManagement/installer").install();
+
         break;
     case 'stop':
-        require("../lib/nginx/serviceControl.js").stop();
+        //require("../lib/nginx/serviceControl.js").stop();
         //require("../lib/arango/serviceControl.js").stop();
         break;
     default:
