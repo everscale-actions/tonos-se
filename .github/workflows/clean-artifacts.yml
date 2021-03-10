@@ -1,6 +1,7 @@
 ﻿name: clean artifacts
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
 
@@ -11,4 +12,4 @@ jobs:
       - name: cleanup
         uses: glassechidna/artifact-cleaner@master
         with:
-          minimumAge: 86400 # all artifacts at least one day old
+          minimumAge: 3600 # all artifacts at least one day old
