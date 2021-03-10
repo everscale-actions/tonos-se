@@ -150,7 +150,7 @@ jobs:
         run: |
           npm install
           npm run download
-      - run: tar -cvf nginx-${{ matrix.os }}.tar nginx/nginx
+      - run: tar -C nginx -cvf nginx-${{ matrix.os }}.tar nginx
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
@@ -181,8 +181,8 @@ jobs:
       - name: Copy additional files from tonos-se repos
         run: |
           mkdir -p configs
-          cp -r tonos-se/docker configs/
-          tar -cvf config.tar configs
+          cp -r tonos-se/docker/* configs/
+          tar -C configs -cvf configs.tar .
           
       - name: 'Merge tar files'
         working-directory: artifacts
@@ -195,7 +195,7 @@ jobs:
             tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
             tar --concatenate --file=release-$i.tar nginx-$i/nginx-$i.tar
             tar --concatenate --file=release-$i.tar q-server/q-server.tar
-            tar --concatenate --file=release-$i.tar ${{ github.workspace }}/config.tar
+            tar --concatenate --file=release-$i.tar ${{ github.workspace }}/configs.tar
             gzip release-$i.tar
           done
            
