@@ -195,7 +195,7 @@ jobs:
           path: configs.tar
           if-no-files-found: error
 
-  prepare-artifacts:
+  publish-release:
     needs:
       - build-node-se
       - build-arango
