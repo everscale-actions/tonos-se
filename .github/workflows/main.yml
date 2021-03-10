@@ -220,25 +220,6 @@ jobs:
             gzip release-$i.tar
           done
            
-      - name: 📚 Publish artifact
-        uses: actions/upload-artifact@v2
-        with:          
-          name: release
-          path: artifacts/release-*.tar.gz
-          if-no-files-found: error
-
-  publish:
-    name: Create Release
-    runs-on: ubuntu-latest  
-    needs:
-      - prepare-artifacts
-    steps: 
-      - name: 🎣 Download release artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
-          name: release
-   
       - name: 🍸 Publish release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
