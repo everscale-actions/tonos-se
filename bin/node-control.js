@@ -7,12 +7,15 @@ command = args[0];
 
 const path = require('path');
 global.appRoot = path.join(path.resolve(__dirname),"..");
+global.serverPath = path.join(appRoot,".server");
+global.appsPath = path.join(serverPath,".apps");
+global.cachePath = path.join(serverPath,".cache");
+global.dataPath = path.join(serverPath,".data");
 
 switch (command) {
     case 'start':
         //check if .server exists
         require("../lib/serverManagement/installer").install();
-
         break;
     case 'stop':
         //require("../lib/nginx/serviceControl.js").stop();
