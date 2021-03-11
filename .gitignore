@@ -105,3 +105,6 @@ dist
 
 # Node server dir
 .server
+
+# Rider IDE
+.idea
