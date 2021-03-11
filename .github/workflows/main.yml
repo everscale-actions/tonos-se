@@ -4,6 +4,8 @@ on: [push]
 
 jobs:
   build:
+    env:
+      NODESE_RELEASE_TAG: 0.25.0
     strategy:
       fail-fast: false
       matrix:
