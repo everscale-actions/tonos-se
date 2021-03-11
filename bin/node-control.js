@@ -15,12 +15,10 @@ global.logsPath = path.join(serverPath,"logs");
 
 switch (command) {
     case 'start':
-        //check if .server exists
-        require("../lib/serverManagement/installer").install();
+        require("../lib/serverManagement/management").start();
         break;
     case 'stop':
-        //require("../lib/nginx/serviceControl.js").stop();
-        //require("../lib/arango/serviceControl.js").stop();
+        require("../lib/serverManagement/management").stop();
         break;
     default:
         break;
