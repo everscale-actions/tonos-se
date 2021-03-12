@@ -138,7 +138,7 @@ jobs:
   
       - name: TAR arangodb binaries
         run: |        
-          tar -cvf q-server.tar q-server/dist
+          tar -cvf q-server.tar q-server/dist/ q-server/res/ q-server/index.js q-server/package.json
   
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
