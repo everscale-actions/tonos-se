@@ -1,4 +1,4 @@
-﻿{
+{
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
@@ -7,5 +7,6 @@
   "eslint.alwaysShowStatus": true,
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+  },
+  "files.eol": "\n"
 }
