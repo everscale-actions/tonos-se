@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
+const path = require('path');
+
 require('../lib/global.js');
+require('dotenv').config();
+require('dotenv').config({ path: path.join(global.appRoot, '.env.settings') });
 
 const managment = require('../lib/serverManagement/management');
 
