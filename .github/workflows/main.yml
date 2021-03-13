@@ -127,7 +127,10 @@ jobs:
           if-no-files-found: error
           
   build-q-server:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu, macos, windows]
+    runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Checkout current repo
         uses: actions/checkout@v2
@@ -135,16 +138,19 @@ jobs:
           path: q-server
           repository: tonlabs/ton-q-server
           ref: ${{ env.TON_Q_SERVER_VERSION }}  
+
+      - name: NPM Install
+        working-directory: q-server
+        run: npm install --production --force
   
-      - name: TAR arangodb binaries
-        run: |        
-          tar -cvf q-server.tar q-server/dist/ q-server/res/ q-server/index.js q-server/package.json
+      - name: TAR q-server binaries
+        run: tar -cvf q-server-${{ runner.os }}.tar q-server/dist/ q-server/res/ q-server/node_modules/ q-server/index.js q-server/package.json
   
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: q-server
-          path: q-server.tar
+          name: q-server-${{ runner.os }}
+          path: q-server-${{ runner.os }}.tar
           if-no-files-found: error
           
   build-nginx:
@@ -219,7 +225,7 @@ jobs:
             tar --concatenate --file=release-$i.tar arango-$i/arango-$i.tar
             tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
             tar --concatenate --file=release-$i.tar nginx-$i/nginx-$i.tar
-            tar --concatenate --file=release-$i.tar q-server/q-server.tar
+            tar --concatenate --file=release-$i.tar q-server-$i/q-server-$i.tar
             tar --concatenate --file=release-$i.tar configs/configs.tar
             gzip release-$i.tar
           done
