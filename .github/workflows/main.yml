@@ -18,15 +18,17 @@ env:
   ARANGODB_VERSION: 3.7.9
   TON_Q_SERVER_VERSION: 0.34.0
   NGINX_VERSION: 1.19.7
+  
+defaults:
+  run:
+    shell: bash
+    
 jobs:
   build-node-se:
     strategy:
       matrix:
         os: [ubuntu, macos, windows]
     runs-on: ${{ matrix.os }}-latest
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Checkout tonos-se
         uses: actions/checkout@v2
@@ -86,9 +88,6 @@ jobs:
           if-no-files-found: error
 
   build-arango:
-    defaults:
-      run:
-        shell: bash
     strategy:
       matrix:
         os: [Linux, Windows, macOS]
