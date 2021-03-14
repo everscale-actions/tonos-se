@@ -6,7 +6,7 @@ require('../lib/global.js');
 require('dotenv').config();
 require('dotenv').config({ path: path.join(global.appRoot, '.env.settings') });
 
-const management = require('../lib/serverManagement/management');
+const management = require('../lib/control');
 
 const args = process.argv.splice(process.execArgv.length + 2);
 const command = args[0];
