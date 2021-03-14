@@ -103,8 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
-# Node server dir
+# Node SE server and cache dirs
 .server
+.cache
 
 # Rider IDE
 .idea
