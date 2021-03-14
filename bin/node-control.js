@@ -21,6 +21,9 @@ switch (command) {
   case 'reset':
     management.reset();
     break;
+  case 'status':
+    management.status();
+    break;
   default:
     break;
 }
