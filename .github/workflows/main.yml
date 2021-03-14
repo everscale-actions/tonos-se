@@ -8,7 +8,7 @@ on:
       - main
   pull_request:
     paths-ignore:
-      - '.github/workflows/clean-artifacts.yml'    
+      - '.github/workflows/clean-artifacts.yml'
     branches:
       - main
   workflow_dispatch:
@@ -18,16 +18,16 @@ env:
   ARANGODB_VERSION: 3.7.9
   TON_Q_SERVER_VERSION: 0.34.0
   NGINX_VERSION: 1.19.7
-  
+
 defaults:
   run:
     shell: bash
-    
+
 jobs:
   build-node-se:
     strategy:
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [ ubuntu, macos, windows ]
     runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Checkout tonos-se
@@ -35,7 +35,7 @@ jobs:
         with:
           repository: 'tonlabs/tonos-se'
           ref: ${{ env.TONOS_SE_VERSION }}
-          
+
       - name: ⚡ Cache cargo
         uses: actions/cache@v2
         with:
@@ -46,13 +46,13 @@ jobs:
             ${{ runner.os }}-cargoregistry-${{ hashFiles('ton-node-se/Cargo.toml') }}
           restore-keys: |
             ${{ runner.os }}-cargoregistry-
-            
+
       - name: 🔨 Generate Cargo.lock
         working-directory: ton-node-se
         env:
           CARGO_TERM_COLOR: always
         run: cargo generate-lockfile
-          
+
       - name: ⚡ Cache target
         uses: actions/cache@v2
         with:
@@ -79,7 +79,7 @@ jobs:
             chmod +x ton-node/ton_node_startup
           fi
           tar -cvf ton-node-${{ runner.os }}.tar ton-node
-          
+
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
@@ -90,7 +90,7 @@ jobs:
   build-arango:
     strategy:
       matrix:
-        os: [Linux, Windows, macOS]
+        os: [ Linux, Windows, macOS ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current repo
@@ -117,18 +117,18 @@ jobs:
           mkdir -p arango/var/lib/arangodb3-apps
           mkdir -p arango/var/lib/arangodb3          
           tar -cvf arango-${{ matrix.os }}.tar arango
-      
+
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
           name: arango-${{ matrix.os }}
           path: arango-${{ matrix.os }}.tar
           if-no-files-found: error
-          
+
   build-q-server:
     strategy:
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [ ubuntu, macos, windows ]
     runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Checkout current repo
@@ -136,22 +136,22 @@ jobs:
         with:
           path: q-server
           repository: tonlabs/ton-q-server
-          ref: ${{ env.TON_Q_SERVER_VERSION }}  
+          ref: ${{ env.TON_Q_SERVER_VERSION }}
 
       - name: NPM Install
         working-directory: q-server
         run: npm install --production --force
-  
+
       - name: TAR q-server binaries
         run: tar -cvf q-server-${{ runner.os }}.tar q-server/dist/ q-server/res/ q-server/node_modules/ q-server/index.js q-server/package.json
-  
+
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
           name: q-server-${{ runner.os }}
           path: q-server-${{ runner.os }}.tar
           if-no-files-found: error
-          
+
   build-nginx:
     strategy:
       matrix:
@@ -171,8 +171,8 @@ jobs:
         with:
           name: nginx-${{ runner.os }}
           path: nginx-${{ runner.os }}.tar
-          if-no-files-found: error       
-          
+          if-no-files-found: error
+
   build-configs:
     runs-on: ubuntu-latest
     steps:
@@ -187,12 +187,10 @@ jobs:
         run: |
           mkdir -p configs          
           cp -r tonos-se/docker/* configs/
-          cd configs
-          mkdir -p nginx/conf
-          mv nginx.conf.d nginx/conf/nginx.conf
+          cd configs               
           rm Dockerfile
           tar -cvf ../configs.tar `ls -A`
-          
+
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
         with:
@@ -204,7 +202,7 @@ jobs:
     needs:
       - build-node-se
       - build-arango
-      - build-q-server 
+      - build-q-server
       - build-nginx
       - build-configs
     runs-on: ubuntu-latest
@@ -213,7 +211,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: artifacts
-          
+
       - name: 'Merge tar files'
         working-directory: artifacts
         run: |
@@ -228,7 +226,7 @@ jobs:
             tar --concatenate --file=release-$i.tar configs/configs.tar
             gzip release-$i.tar
           done
-           
+
       - name: 🍸 Publish release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
