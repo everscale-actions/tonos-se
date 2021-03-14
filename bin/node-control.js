@@ -18,6 +18,9 @@ switch (command) {
   case 'stop':
     management.stop();
     break;
+  case 'reset':
+    management.reset();
+    break;
   default:
     break;
 }
