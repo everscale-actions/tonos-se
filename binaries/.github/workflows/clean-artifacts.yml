@@ -1,0 +1,26 @@
+﻿name: clean artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      minimumAge:
+        description: 'Minimum Age'
+        required: true
+        default: '3600'    
+    
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    env: 
+      MINIMUM_AGE: 86400
+    steps:      
+      - if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: echo "MINIMUM_AGE=${{ github.event.inputs.minimumAge }}" >> $GITHUB_ENV
+        
+      - name: cleanup        
+        uses: glassechidna/artifact-cleaner@master
+        with:
+          minimumAge: ${{ env.MINIMUM_AGE }}        

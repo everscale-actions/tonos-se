@@ -1,0 +1,243 @@
+﻿name: Main workflow
+
+on:
+  push:
+    paths-ignore:
+      - '.github/workflows/clean-artifacts.yml'
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - '.github/workflows/clean-artifacts.yml'
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  TONOS_SE_VERSION: 0.25.0
+  ARANGODB_VERSION: 3.7.9
+  TON_Q_SERVER_VERSION: 0.34.0
+  NGINX_VERSION: 1.19.7
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-node-se:
+    strategy:
+      matrix:
+        os: [ ubuntu, macos, windows ]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - name: Checkout tonos-se
+        uses: actions/checkout@v2
+        with:
+          repository: 'tonlabs/tonos-se'
+          ref: ${{ env.TONOS_SE_VERSION }}
+
+      - name: ⚡ Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: |
+            ${{ runner.os }}-cargoregistry-${{ hashFiles('ton-node-se/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargoregistry-
+
+      - name: 🔨 Generate Cargo.lock
+        working-directory: ton-node-se
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo generate-lockfile
+
+      - name: ⚡ Cache target
+        uses: actions/cache@v2
+        with:
+          path: |
+            ton-node-se/target
+          key: |
+            ${{ runner.os }}-cargotarget-${{ hashFiles('ton-node-se/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargotarget-
+
+      - name: 🔨 Build
+        working-directory: ton-node-se
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo build --release
+
+      - name: 🔨 TAR node binaries
+        run: |
+          mkdir -p ton-node
+          if [[ "${{ runner.os }}" == 'Windows' ]]; then
+            cp ton-node-se/target/release/ton_node_startup.exe ton-node
+          else 
+            cp ton-node-se/target/release/ton_node_startup ton-node
+            chmod +x ton-node/ton_node_startup
+          fi
+          tar -cvf ton-node-${{ runner.os }}.tar ton-node
+
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ton-node-${{ runner.os }}
+          path: ton-node-${{ runner.os }}.tar
+          if-no-files-found: error
+
+  build-arango:
+    strategy:
+      matrix:
+        os: [ Linux, Windows, macOS ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v2
+
+      - name: Load parameters
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            const config = require(`${process.env.GITHUB_WORKSPACE}/config.arangodb.js`)(`${process.env.ARANGODB_VERSION}`)
+            core.exportVariable('PATH_IN_ARCHIVE', config["${{ matrix.os }}"].pathInArchive)
+            core.exportVariable('URL', config["${{ matrix.os }}"].url)
+
+      - name: Download and unpack
+        uses: nrukavkov/configurator@v0.0.8
+        with:
+          name: arango
+          url: ${{env.URL}}
+          pathInArchive: ${{env.PATH_IN_ARCHIVE}}
+
+      - name: TAR arangodb binaries
+        run: |
+          mv .configurator/arango ./arango
+          mkdir -p arango/var/lib/arangodb3-apps
+          mkdir -p arango/var/lib/arangodb3          
+          tar -cvf arango-${{ matrix.os }}.tar arango
+
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: arango-${{ matrix.os }}
+          path: arango-${{ matrix.os }}.tar
+          if-no-files-found: error
+
+  build-q-server:
+    strategy:
+      matrix:
+        os: [ ubuntu, macos, windows ]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v2
+        with:
+          path: q-server
+          repository: tonlabs/ton-q-server
+          ref: ${{ env.TON_Q_SERVER_VERSION }}
+
+      - name: NPM Install
+        working-directory: q-server
+        run: npm install --production --force
+
+      - name: TAR q-server binaries
+        run: tar -cvf q-server-${{ runner.os }}.tar q-server/dist/ q-server/res/ q-server/node_modules/ q-server/index.js q-server/package.json
+
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: q-server-${{ runner.os }}
+          path: q-server-${{ runner.os }}.tar
+          if-no-files-found: error
+
+  build-nginx:
+    strategy:
+      matrix:
+        os: [ ubuntu, macos, windows ]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Download nginx
+        working-directory: nginx
+        run: |
+          npm install
+          npm run download
+      - run: tar -C nginx -cvf nginx-${{ runner.os }}.tar nginx
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: nginx-${{ runner.os }}
+          path: nginx-${{ runner.os }}.tar
+          if-no-files-found: error
+
+  build-configs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tonos-se
+        uses: actions/checkout@v2
+        with:
+          path: tonos-se
+          repository: 'tonlabs/tonos-se'
+          ref: ${{ env.TONOS_SE_VERSION }}
+
+      - name: Copy additional files from tonos-se repos
+        run: |
+          mkdir -p configs          
+          cp -r tonos-se/docker/* configs/
+          cd configs               
+          rm Dockerfile
+          find . -name "entrypoint" -type f -delete
+          mkdir -p nginx/conf
+          mv nginx.conf.d nginx/conf/nginx.conf
+          sed -i -e '1 s/events {/user nobody nogroup;\nevents {/;' nginx/conf/nginx.conf
+          sed -i "s+listen 80 reuseport;+listen 8080 reuseport;+g" nginx/conf/nginx.conf
+          tar -cvf ../configs.tar `ls -A`
+
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: configs
+          path: configs.tar
+          if-no-files-found: error
+
+  publish-release:
+    needs:
+      - build-node-se
+      - build-arango
+      - build-q-server
+      - build-nginx
+      - build-configs
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🎣 Download all workflow run artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: 'Merge tar files'
+        working-directory: artifacts
+        run: |
+          declare -a arr=("Linux" "Windows" "macOS")
+          for i in "${arr[@]}"
+          do
+            echo "Creating archive release-$i.tar.gz"
+            tar --concatenate --file=release-$i.tar arango-$i/arango-$i.tar
+            tar --concatenate --file=release-$i.tar ton-node-$i/ton-node-$i.tar
+            tar --concatenate --file=release-$i.tar nginx-$i/nginx-$i.tar
+            tar --concatenate --file=release-$i.tar q-server-$i/q-server-$i.tar
+            tar --concatenate --file=release-$i.tar configs/configs.tar
+            gzip release-$i.tar
+          done
+
+      - name: 🍸 Publish release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ env.TONOS_SE_VERSION }}"
+          prerelease: false
+          draft: ${{ github.event_name == 'pull_request' }}
+          title: "Node SE binaries ${{ env.TONOS_SE_VERSION }}"
+          files: artifacts/**/release-*.tar.gz
