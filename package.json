@@ -25,7 +25,9 @@
     },
     "homepage": "https://github.com/ton-actions/node-setup#readme",
     "dependencies": {
+        "@lifeomic/attempt": "^3.0.0",
         "adm-zip": "^0.5.3",
+        "arangojs": "^7.3.0",
         "atomic-sleep": "^1.0.0",
         "axios": "^0.21.1",
         "child_process": "^1.0.2",
