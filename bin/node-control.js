@@ -30,10 +30,4 @@ async function main() {
   }
 }
 
-(async () => {
-  try {
-    await main();
-  } catch (e) {
-    process.stderr.write(`Critical error: ${e}`);
-  }
-})();
+(async () => { await main(); })();
