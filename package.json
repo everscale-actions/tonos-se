@@ -40,7 +40,8 @@
         "progress": "^2.0.3",
         "rimraf": "^2.6.3",
         "tar": "^6.1.0",
-        "temp": "^0.9.4"
+        "temp": "^0.9.4",
+        "wait-port": "^0.2.9"
     },
     "devDependencies": {
         "eslint": "^7.21.0",
