@@ -56,9 +56,8 @@ jobs:
           npm i
           npm i -g
       - name: Run Node SE
-        run:
-          ton-node start
-      - name: Check ports
+        run: ton-node start
+      - name: Ensure that ports are open
         run: |
           nc -vz localhost ${{ env.NGINX-PORT }}
           nc -vz localhost ${{ env.ARANGO-PORT }}
@@ -82,3 +81,11 @@ jobs:
         run: |
           npm i
           node run
+      - name: Stop Node SE
+        run: ton-node stop
+      - name: Ensure that ports are closed
+        run: |
+          ! nc -vz localhost ${{ env.NGINX-PORT }}
+          ! nc -vz localhost ${{ env.ARANGO-PORT }}
+          ! nc -vz localhost ${{ env.QSERVER-PORT }}
+          ! nc -vz localhost ${{ env.NODE-PORT }}
