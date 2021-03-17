@@ -1,11 +1,23 @@
 name: Node.js CI
 
-on: [ push ]
-
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ labeled ]
 jobs:
-  build:
-    env:
-      NODESE_RELEASE_TAG: 0.25.0
+  labels:
+    name: Label taking off
+    if: github.event.label.name == 'start_tests'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Take off label
+        uses: actions/github-script@v1
+        with:
+          script: "github.issues.removeLabel({...context.issue, name: '${{ github.event.label.name }}' })"
+  tests:
+    if: github.event.label.name == 'start_tests'
     strategy:
       fail-fast: false
       matrix:
@@ -25,21 +37,21 @@ jobs:
         with:
           repository: tonlabs/ton-client-js
           path: ton-client-js
-          
+
       - name: "Use Node.js: ${{ matrix.node-version }} OS: ${{matrix.os}}"
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Restore CLI   
-        working-directory: cli          
+      - name: Restore CLI
+        working-directory: cli
         run: |
           npm i
           npm i -g
-      - name: Run Node SE  
-        run:    
+      - name: Run Node SE
+        run:
           ton-node start
       - name: Build ton-client-js/packages/core
-        working-directory: ton-client-js/packages/core        
+        working-directory: ton-client-js/packages/core
         run: |
           npm i
           tsc
