@@ -19,10 +19,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          path: cli
+      - uses: actions/checkout@v2
+        with:
+          repository: tonlabs/ton-client-js
+          path: ton-client-js
+          
       - name: "Use Node.js: ${{ matrix.node-version }} OS: ${{matrix.os}}"
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i
-      - run: npm i -g
-      - run: ton-node start
+      - name: Restore CLI   
+        working-directory: cli          
+        run: |
+          npm i
+          npm i -g
+      - name: Run Node SE  
+        run:    
+          ton-node start
+      - name: Build ton-client-js/packages/core
+        working-directory: ton-client-js/packages/core        
+        run: |
+          npm i
+          tsc
+      - name: Build ton-client-js/packages/tests
+        working-directory: ton-client-js/packages/tests
+        run: |
+          npm i
+          tsc
+      - name: Run tests
+        working-directory: ton-client-js/packages/tests-node
+        run: |
+          npm i
+          node run
