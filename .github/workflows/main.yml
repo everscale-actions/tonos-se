@@ -46,7 +46,6 @@ jobs:
         with:
           repository: tonlabs/ton-client-js
           path: ton-client-js
-
       - name: "Use Node.js: ${{ matrix.node-version }} OS: ${{matrix.os}}"
         uses: actions/setup-node@v1
         with:
@@ -61,10 +60,10 @@ jobs:
           ton-node start
       - name: Check ports
         run: |
-          nc -z -v -w1 localhost ${{ env.NGINX-PORT }}
-          nc -z -v -w1 localhost ${{ env.ARANGO-PORT }}
-          nc -z -v -w1 localhost ${{ env.QSERVER-PORT }}
-          nc -z -v -w1 localhost ${{ env.NODE-PORT }}
+          nc -vz localhost ${{ env.NGINX-PORT }}
+          nc -vz localhost ${{ env.ARANGO-PORT }}
+          nc -vz localhost ${{ env.QSERVER-PORT }}
+          nc -vz localhost ${{ env.NODE-PORT }}
       - name: Build ton-client-js/packages/core
         working-directory: ton-client-js/packages/core
         run: |
