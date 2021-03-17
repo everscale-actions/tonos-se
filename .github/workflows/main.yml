@@ -8,8 +8,11 @@ on:
     types: [ labeled ]
     
 env:
-  NODE-SE-PORT: 8080
-
+  NGINX-PORT: 8080
+  ARANGO-PORT: 8529
+  QSERVER-PORT: 4000
+  NODE-PORT: 40301
+  
 jobs:
   labels:
     name: Label taking off
@@ -54,6 +57,12 @@ jobs:
       - name: Run Node SE
         run:
           ton-node start
+      - name: Check ports
+        run: |
+          nc -z -v -w1 localhost ${{ env.NGINX-PORT }}
+          nc -z -v -w1 localhost ${{ env.ARANGO-PORT }}
+          nc -z -v -w1 localhost ${{ env.QSERVER-PORT }}
+          nc -z -v -w1 localhost ${{ env.NODE-PORT }}
       - name: Build ton-client-js/packages/core
         working-directory: ton-client-js/packages/core
         run: |
@@ -68,7 +77,7 @@ jobs:
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
-          TON_NETWORK_ADDRESS: http://localhost:${{ env.NODE-SE-PORT }}
+          TON_NETWORK_ADDRESS: http://localhost:${{ env.NGINX-PORT }}
         run: |
           npm i
           node run
