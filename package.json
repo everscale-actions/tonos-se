@@ -26,22 +26,18 @@
     "homepage": "https://github.com/ton-actions/node-setup#readme",
     "dependencies": {
         "@lifeomic/attempt": "^3.0.0",
-        "adm-zip": "^0.5.3",
         "arangojs": "^7.3.0",
-        "atomic-sleep": "^1.0.0",
         "axios": "^0.21.1",
         "child_process": "^1.0.2",
         "dotenv": "^8.2.0",
         "fs-extra": "^9.1.0",
-        "https": "^1.0.0",
         "is-running": "^2.1.0",
-        "node-fetch": "^2.6.1",
         "path": "^0.12.7",
         "progress": "^2.0.3",
         "rimraf": "^2.6.3",
         "tar": "^6.1.0",
         "temp": "^0.9.4",
-        "wait-port": "^0.2.9"
+        "wait-on": "^5.3.0"
     },
     "devDependencies": {
         "eslint": "^7.21.0",
