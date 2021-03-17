@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
     types: [ labeled ]
+    
+env:
+  NODE-SE-PORT: 8080
+
 jobs:
   labels:
     name: Label taking off
@@ -62,6 +66,9 @@ jobs:
           tsc
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
+        env:
+          USE_NODE_SE: true
+          TON_NETWORK_ADDRESS: http://localhost:${{ env.NODE-SE-PORT }}
         run: |
           npm i
           node run
