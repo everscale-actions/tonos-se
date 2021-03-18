@@ -3,8 +3,9 @@
 const path = require('path');
 
 require('../lib/global.js');
+require('dotenv').config({ path: path.join(global.appRoot, '.env.common') });
+require('dotenv').config({ path: global.envFilePath });
 require('dotenv').config();
-require('dotenv').config({ path: path.join(global.appRoot, '.env.settings') });
 
 const commandLineArgs = require('command-line-args');
 const control = require('../lib/control');
@@ -35,8 +36,8 @@ async function main() {
       const mergeDefinitions = [
         { name: 'nginx-port', type: Number },
         { name: 'arango-port', type: Number },
-        { name: 'node-port', type: Number },
-        { name: 'qserver-port', type: Number },
+        { name: 'ton-node-port', type: Number },
+        { name: 'q-server-port', type: Number },
       ];
 
       // eslint-disable-next-line no-case-declarations

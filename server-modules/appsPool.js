@@ -3,4 +3,4 @@ const arango = require('./arango/module');
 const qServer = require('./q-server/module');
 const tonNode = require('./ton-node/module');
 
-module.exports.appsPool = [nginx, arango, tonNode, qServer];
+module.exports.appsPool = [arango, tonNode, qServer, nginx];
