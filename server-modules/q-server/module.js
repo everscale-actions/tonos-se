@@ -20,8 +20,7 @@ function setPort() {
   setPortBase(targets);
 }
 
-module.exports.start = () => appBase.start(config);
+module.exports.start = () => appBase.start(config, () => setPort());
 module.exports.stop = () => appBase.stop(config);
 module.exports.status = () => appBase.status(config);
-module.exports.setPort = setPort;
 module.exports.config = config;
