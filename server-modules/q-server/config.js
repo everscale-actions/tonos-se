@@ -1,13 +1,8 @@
 const serviceName = 'q-server';
 const path = require('path');
-const fs = require('fs');
-const dotenv = require('dotenv');
 
-// load personal env file
-const envFile = path.join(__dirname, '.env.app');
-if (fs.existsSync(envFile)) {
-  dotenv.config({ path: envFile });
-}
+// todo: should be refactored
+const port = require('../../lib/app-config').getConfig()[`${serviceName}-port`];
 
 const appPath = path.join(global.appsPath, serviceName);
 const dataPath = path.join(global.dataPath, serviceName);
@@ -25,5 +20,5 @@ exports.config = {
   logsPath,
   logFile: path.join(logsPath, `${serviceName}.log`),
   errFile: path.join(logsPath, `${serviceName}.err`),
-  port: 4000,
+  port,
 };

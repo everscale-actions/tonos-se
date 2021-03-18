@@ -2,6 +2,9 @@ const serviceName = 'arango';
 const path = require('path');
 const os = require('os');
 
+// todo: should be refactored
+const port = require('../../lib/app-config').getConfig()[`${serviceName}-port`];
+
 const appPath = path.join(global.appsPath, serviceName);
 const binPath = (os.platform() === 'win32' ? path.join(appPath, 'usr', 'bin', 'arangod.exe') : path.join(appPath, 'usr', 'sbin', 'arangod'));
 const binPathClient = (os.platform() === 'win32' ? path.join(appPath, 'usr', 'bin', 'arangosh.exe') : path.join(appPath, 'usr', 'bin', 'arangosh'));
@@ -17,7 +20,7 @@ exports.config = {
   pidFilePath,
   сreatePidFile: true,
   paramsStart: ['--config', path.join(appPath, 'config'),
-    '--server.endpoint', process.env.ARANGO_ENDPOINT,
+    '--server.endpoint', `tcp://127.0.0.1:${port}`,
     '--server.authentication', 'false',
     '--log.foreground-tty', 'true',
     '--javascript.startup-directory', path.join(appPath, 'usr', 'share', 'arangodb3', 'js'),
@@ -27,7 +30,7 @@ exports.config = {
   paramsMigrations: ['-c', 'none',
     '--server.authentication', 'false',
     '--javascript.startup-directory', path.join(appPath, 'usr', 'share', 'arangodb3', 'js'),
-    `--server.endpoint=${process.env.ARANGO_ENDPOINT}`,
+    `--server.endpoint=tcp://127.0.0.1:${port}`,
     '--javascript.execute'],
   dataPath,
   logsPath,
@@ -35,5 +38,5 @@ exports.config = {
   migrationsPath,
   logFile: path.join(logsPath, `${serviceName}.log`),
   errFile: path.join(logsPath, `${serviceName}.err`),
-  port: 7433,
+  port,
 };
