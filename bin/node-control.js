@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-const path = require('path');
-
 require('../lib/global.js');
-require('dotenv').config({ path: path.join(global.appRoot, '.env.common') });
-require('dotenv').config({ path: global.envFilePath });
-require('dotenv').config();
 
 const commandLineArgs = require('command-line-args');
 const control = require('../lib/control');
@@ -41,15 +36,16 @@ async function main() {
       break;
     case 'config':
       // eslint-disable-next-line no-case-declarations
-      const portDefenitions = [
+      const configDefenitions = [
         { name: 'nginx-port', type: Number },
         { name: 'arango-port', type: Number },
         { name: 'ton-node-port', type: Number },
         { name: 'q-server-port', type: Number },
+        { name: 'node-release', type: String },
       ];
 
       // eslint-disable-next-line no-case-declarations
-      const newSettings = commandLineArgs(portDefenitions, { argv });
+      const newSettings = commandLineArgs(configDefenitions, { argv });
 
       control.config(newSettings);
       break;

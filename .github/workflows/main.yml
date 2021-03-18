@@ -5,15 +5,15 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
+      - "README.md"
   pull_request:
-    types: [ labeled ]
+    types: [labeled]
 
 env:
-  NGINX-PORT: 8080
-  ARANGO-PORT: 8529
-  QSERVER-PORT: 4000
-  NODE-PORT: 40301
+  DEFAULT_NGINX_PORT: 8080
+  DEFAULT_ARANGO_PORT: 8529
+  DEFAULT_QSERVER_PORT: 4000
+  DEFAULT_NODE_PORT: 40301
   CUSTOM_NGINX_PORT: 8881
   CUSTOM_ARANGO_PORT: 8882
   CUSTOM_QSERVER_PORT: 8883
@@ -37,8 +37,8 @@ jobs:
         # disable matrix die to billing limits
         # node-version: [ 12.x, 15.x ]
         # os: [ ubuntu, macos, windows ]
-        node-version: [ 14.x ]
-        os: [ ubuntu ]
+        node-version: [14.x]
+        os: [ubuntu]
 
     runs-on: ${{ matrix.os }}-latest
 
@@ -63,10 +63,10 @@ jobs:
         run: ton-node start
       - name: Ensure that ports are open
         run: |
-          nc -vz localhost ${{ env.NGINX-PORT }}
-          nc -vz localhost ${{ env.ARANGO-PORT }}
-          nc -vz localhost ${{ env.QSERVER-PORT }}
-          nc -vz localhost ${{ env.NODE-PORT }}
+          nc -vz localhost ${{ env.DEFAULT_NGINX_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
       - name: Build ton-client-js/packages/core
         working-directory: ton-client-js/packages/core
         run: |
@@ -81,7 +81,7 @@ jobs:
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
-          TON_NETWORK_ADDRESS: http://localhost:${{ env.NGINX-PORT }}
+          TON_NETWORK_ADDRESS: http://localhost:${{ env.DEFAULT_NGINX_PORT }}
         run: |
           npm i
           node run
@@ -89,19 +89,19 @@ jobs:
         run: ton-node stop
       - name: Ensure that ports are closed
         run: |
-          ! nc -vz localhost ${{ env.NGINX-PORT }}
-          ! nc -vz localhost ${{ env.ARANGO-PORT }}
-          ! nc -vz localhost ${{ env.QSERVER-PORT }}
-          ! nc -vz localhost ${{ env.NODE-PORT }}
+          ! nc -vz localhost ${{ env.DEFAULT_NGINX_PORT }}
+          ! nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
+          ! nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
+          ! nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
       - name: Change default ports
         run: |
           ! nc -vz localhost ${{ env.CUSTOM_NGINX_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
-          ton-node config --nginx-port ${{ env.CUSTOM_NGINX_PORT }} --arango-port ${{ env.CUSTOM_ARANGO_PORT }} --ton-node-port ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }} 
+          ton-node config --DEFAULT_NGINX_PORT ${{ env.CUSTOM_NGINX_PORT }} --DEFAULT_ARANGO_PORT ${{ env.CUSTOM_ARANGO_PORT }} --ton-DEFAULT_NODE_PORT ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }}
       - name: Run Node SE
-        run: ton-node start          
+        run: ton-node start
       - name: Ensure that ports are open
         run: |
           nc -vz localhost ${{ env.CUSTOM_NGINX_PORT }}
@@ -115,7 +115,7 @@ jobs:
           TON_NETWORK_ADDRESS: http://localhost:${{ env.CUSTOM_NGINX_PORT }}
         run: |
           npm i
-          node run          
+          node run
       - name: Stop Node SE
         run: ton-node stop
       - name: Ensure that ports are closed
