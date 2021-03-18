@@ -1,5 +1,5 @@
 const { config } = require('./config');
-const appBase = require('../app-base');
+const appBase = require('../../lib/app-base');
 
 module.exports.start = () => appBase.start(config);
 module.exports.stop = () => appBase.stop(config);

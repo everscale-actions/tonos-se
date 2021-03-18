@@ -1,7 +1,7 @@
 const fs = require('fs');
 const fsExtra = require('fs-extra');
 const { config } = require('./config');
-const appBase = require('../app-base');
+const appBase = require('../../lib/app-base');
 
 async function start() {
   if (!fs.existsSync(config.pidFilePath)) {

@@ -36,6 +36,7 @@
         "json-override": "^0.2.0",
         "path": "^0.12.7",
         "progress": "^2.0.3",
+        "replace-in-file": "^6.2.0",
         "rimraf": "^2.6.3",
         "tar": "^6.1.0",
         "temp": "^0.9.4",
