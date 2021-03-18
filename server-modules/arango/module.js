@@ -5,7 +5,6 @@ const { execSync } = require('child_process');
 const arangoClient = require('arangojs');
 const { retry } = require('@lifeomic/attempt');
 const appBase = require('../../lib/app-base');
-const appConfig = require('../../lib/app-config');
 const { setPortBase } = require('../../lib/control-ports');
 
 const { config } = require('./config');
@@ -23,7 +22,8 @@ function runMigations() {
 }
 
 function setPort() {
-  const portNumber = JSON.parse(appConfig.getConfig())[`${config.serviceName}-port`];
+  const portNumber = config.port;
+
   const targets = [{
     files: global.envFilePath,
     from: /Q_DATA_MUT=http:\/\/127\.0\.0\.1:\d+/g,
@@ -52,7 +52,12 @@ function setPort() {
   {
     files: path.join(global.dataPath, 'ton-node', 'cfg'),
     from: /"server": "127\.0\.0\.1:\d+",/g,
-    to: `"server 127.0.0.1:${portNumber}",`,
+    to: `"server": "127.0.0.1:${portNumber}",`,
+  },
+  {
+    files: path.join(global.appsPath, 'ton-node', 'cfg'),
+    from: /"server": "127\.0\.0\.1:\d+",/g,
+    to: `"server": "127.0.0.1:${portNumber}",`,
   },
   ];
 
@@ -61,6 +66,7 @@ function setPort() {
 
 async function start() {
   await appBase.start(config, () => setPort());
+
   //
   await retry(() => {
     const db = new arangoClient.Database({ url: process.env.ARANGO_ENDPOINT }); // todo: need a custom port

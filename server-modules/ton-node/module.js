@@ -3,12 +3,10 @@ const fsExtra = require('fs-extra');
 const path = require('path');
 const { config } = require('./config');
 const appBase = require('../../lib/app-base');
-const appConfig = require('../../lib/app-config');
 const { setPortBase } = require('../../lib/control-ports');
 
 function setPort() {
-  const portNumber = JSON.parse(appConfig.getConfig())[`${config.serviceName}-port`];
-  const portNumberArango = JSON.parse(appConfig.getConfig())['arango-port'];
+  const portNumber = config.port;
 
   const targets = [
     {
@@ -17,9 +15,9 @@ function setPort() {
       to: `"port": ${portNumber},`,
     },
     {
-      files: path.join(config.dataPath, 'cfg'),
-      from: /"server": "127\.0\.0\.1:\d+",/g,
-      to: `"server 127.0.0.1:${portNumberArango}",`,
+      files: path.join(config.appPath, 'cfg'),
+      from: /"port": \d+,/g,
+      to: `"port": ${portNumber},`,
     },
   ];
   setPortBase(targets);

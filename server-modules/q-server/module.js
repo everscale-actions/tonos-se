@@ -1,11 +1,11 @@
 const path = require('path');
 const { config } = require('./config');
 const appBase = require('../../lib/app-base');
-const appConfig = require('../../lib/app-config');
 const { setPortBase } = require('../../lib/control-ports');
 
 function setPort() {
-  const portNumber = JSON.parse(appConfig.getConfig())[`${config.serviceName}-port`];
+  const portNumber = config.port;
+
   const targets = [{
     files: path.join(global.envFilePath),
     from: /Q_PORT=\d+/g,
