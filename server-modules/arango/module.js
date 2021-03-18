@@ -3,7 +3,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const arangoClient = require('arangojs');
 const { retry } = require('@lifeomic/attempt');
-const appBase = require('../app-base');
+const appBase = require('../../lib/app-base');
 
 const { config } = require('./config');
 
