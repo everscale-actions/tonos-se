@@ -8,11 +8,20 @@ const { setPortBase } = require('../../lib/control-ports');
 
 function setPort() {
   const portNumber = JSON.parse(appConfig.getConfig())[`${config.serviceName}-port`];
-  const targets = [{
-    files: path.join(config.dataPath, 'cfg'),
-    from: /"port": \d+,/g,
-    to: `"port": ${portNumber},`,
-  }];
+  const portNumberArango = JSON.parse(appConfig.getConfig())['arango-port'];
+
+  const targets = [
+    {
+      files: path.join(config.dataPath, 'cfg'),
+      from: /"port": \d+,/g,
+      to: `"port": ${portNumber},`,
+    },
+    {
+      files: path.join(config.dataPath, 'cfg'),
+      from: /"server": "127\.0\.0\.1:\d+",/g,
+      to: `"server 127.0.0.1:${portNumberArango}",`,
+    },
+  ];
   setPortBase(targets);
 }
 
