@@ -26,7 +26,12 @@ async function main() {
       await control.stop();
       break;
     case 'reset':
-      await control.reset();
+      // eslint-disable-next-line no-case-declarations
+      const resetDefenitions = [
+        { name: 'force', type: Boolean },
+      ];
+
+      await control.reset(commandLineArgs(resetDefenitions, { argv }).force);
       break;
     case 'restart':
       await control.restart();
@@ -36,7 +41,7 @@ async function main() {
       break;
     case 'config':
       // eslint-disable-next-line no-case-declarations
-      const mergeDefinitions = [
+      const portDefenitions = [
         { name: 'nginx-port', type: Number },
         { name: 'arango-port', type: Number },
         { name: 'ton-node-port', type: Number },
@@ -44,7 +49,7 @@ async function main() {
       ];
 
       // eslint-disable-next-line no-case-declarations
-      const newSettings = commandLineArgs(mergeDefinitions, { argv });
+      const newSettings = commandLineArgs(portDefenitions, { argv });
 
       control.config(newSettings);
       break;
