@@ -28,6 +28,9 @@ async function main() {
     case 'reset':
       await control.reset();
       break;
+    case 'restart':
+      await control.restart();
+      break;
     case 'status':
       await control.status();
       break;
