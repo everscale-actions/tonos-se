@@ -1,14 +1,6 @@
 const serviceName = 'arango';
 const path = require('path');
 const os = require('os');
-const fs = require('fs');
-const dotenv = require('dotenv');
-
-// load personal env file
-const envFile = path.join(__dirname, '.env.app');
-if (fs.existsSync(envFile)) {
-  dotenv.config({ path: envFile });
-}
 
 const appPath = path.join(global.appsPath, serviceName);
 const binPath = (os.platform() === 'win32' ? path.join(appPath, 'usr', 'bin', 'arangod.exe') : path.join(appPath, 'usr', 'sbin', 'arangod'));
@@ -43,5 +35,5 @@ exports.config = {
   migrationsPath,
   logFile: path.join(logsPath, `${serviceName}.log`),
   errFile: path.join(logsPath, `${serviceName}.err`),
-  port: 8529,
+  port: 7433,
 };

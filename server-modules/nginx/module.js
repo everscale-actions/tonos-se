@@ -2,9 +2,10 @@ const fs = require('fs');
 const { execFileSync } = require('child_process');
 const waitOn = require('wait-on');
 const path = require('path');
-const replace = require('replace-in-file');
 const { config } = require('./config');
 const appBase = require('../../lib/app-base');
+const appConfig = require('../../lib/app-config');
+const { setPortBase } = require('../../lib/control-ports');
 
 async function stop() {
   if (fs.existsSync(config.pidFilePath)) {
@@ -18,15 +19,19 @@ async function stop() {
     process.stdout.write(`Service ${config.serviceName} is not started!\n`);
   }
 }
-function setPort(portNumber) {
-  const options = {
+function setPort() {
+  const portNumber = JSON.parse(appConfig.getConfig())[`${config.serviceName}-port`];
+
+  const targets = [{
     files: path.join(config.appPath, 'conf', 'nginx.conf'),
     from: /listen \d+ reuseport;/g,
     to: `listen ${portNumber} reuseport;`,
-  };
-  console.log(options);
-  const results = replace.sync(options);
-  console.log('Replacement results:', results);
+  }, {
+    files: path.join(global.envFilePath),
+    from: /Q_REQUESTS_SERVER=http:\/\/127\.0\.0\.1:\d+/g,
+    to: `Q_REQUESTS_SERVER=http://127.0.0.1:${portNumber}`,
+  }];
+  setPortBase(targets);
 }
 
 module.exports.start = () => appBase.start(config);
