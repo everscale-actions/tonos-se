@@ -39,6 +39,7 @@ async function main() {
         { name: 'arango-port', type: Number },
         { name: 'ton-node-port', type: Number },
         { name: 'q-server-port', type: Number },
+        { name: 'ton-node-requests-port', type: Number },
         { name: 'node-release', type: String },
       ];
 

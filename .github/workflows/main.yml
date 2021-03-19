@@ -14,10 +14,12 @@ env:
   DEFAULT_ARANGO_PORT: 8529
   DEFAULT_QSERVER_PORT: 4000
   DEFAULT_NODE_PORT: 40301
+  DEFAULT_NODE_REQUESTS_PORT: 3000
   CUSTOM_NGINX_PORT: 8881
   CUSTOM_ARANGO_PORT: 8882
   CUSTOM_QSERVER_PORT: 8883
   CUSTOM_NODE_PORT: 8884
+  CUSTOM_NODE_REQUESTS_PORT: 8885
 
 jobs:
   labels:
@@ -67,6 +69,7 @@ jobs:
           nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
           nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
           nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_NODE_REQUESTS_PORT }}
       - name: Build ton-client-js/packages/core
         working-directory: ton-client-js/packages/core
         run: |
@@ -93,13 +96,15 @@ jobs:
           ! nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
           ! nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
           ! nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
+          ! nc -vz localhost ${{ env.DEFAULT_NODE_REQUESTS_PORT }}
       - name: Change default ports
         run: |
           ! nc -vz localhost ${{ env.CUSTOM_NGINX_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
-          tonos-se config --nginx-port ${{ env.CUSTOM_NGINX_PORT }} --arango-port ${{ env.CUSTOM_ARANGO_PORT }} --ton-node-port ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }}
+          ! nc -vz localhost ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
+          tonos-se config --nginx-port ${{ env.CUSTOM_NGINX_PORT }} --arango-port ${{ env.CUSTOM_ARANGO_PORT }} --ton-node-port ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }} --ton-node-requests-port ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
       - name: Run TON OS SE
         run: tonos-se start
       - name: Ensure that ports are open
@@ -108,6 +113,7 @@ jobs:
           nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
           nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
           nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
+          nc -vz localhost ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
         env:
@@ -124,3 +130,4 @@ jobs:
           ! nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
+          ! nc -vz localhost ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
