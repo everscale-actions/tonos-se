@@ -1,3 +1,6 @@
+[![CLI](https://github.com/ton-actions/node-se-setup/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/node-se-setup/actions/workflows/main.yml)
+[![Binaries](https://github.com/ton-actions/node-se-binaries/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/node-se-binaries/actions/workflows/main.yml)
+
 # node-setup
 
 This project provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker. It also provides NPM Package for a quick run locally using CLI depends on your Operation System.
