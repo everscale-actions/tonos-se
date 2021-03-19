@@ -22,7 +22,7 @@ The current solution consists of 2 repositories that solve a specific task.
 
 TONOS SE requires [Node.js](https://nodejs.org/) v12+ to run.
 
-## Manual
+### Manual
 
 ```sh
 git clone https://github.com/ton-actions/tonos-se
@@ -31,7 +31,7 @@ npm i
 npm i -g
 ```
 
-## Using global NPM package
+### Using global NPM package
 
 ```sh
 npm install -g tonos-se
