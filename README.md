@@ -52,9 +52,9 @@ You can set custom port for any application in the solution separately or setup 
 ```sh
 tonos-se config --q-server-port 5000
 tonos-se config --nginx-port 8082
-tonos-se config --tonos-se-port 55443
+tonos-se config --ton-node-port 55443
 tonos-se config --arango-port 7433
-tonos-se config --q-server-port 5000 --nginx-port 8082 --tonos-se-port 55443 --arango-port 7433
+tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433
 tonos-se restart # to apply new changes
 ```
 
