@@ -3,7 +3,12 @@
 
 # TONOS SE
 
-This project provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker. It also provides NPM Package for a quick run locally using CLI depends on your Operation System.
+This solution provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker. And also provides NPM Package for a quick run locally using CLI depends on your Operation System.
+
+The current solution consists of 2 repositories that solve a specific task.
+
+- ton-actions/tonos-se-binaries - application packs includes binaries and configuration files
+- ton-actions/tonos-se - CLI tool for install and manage TONOS SE (NPM Package)
 
 ## Features
 
@@ -21,7 +26,7 @@ TONOS SE requires [Node.js](https://nodejs.org/) v12+ to run.
 
 ```sh
 git clone https://github.com/ton-actions/tonos-se
-cd node-se-setup
+cd tonos-se
 npm i
 npm i -g
 ```
@@ -29,7 +34,7 @@ npm i -g
 ## Using global NPM package
 
 ```sh
-npm install -g <package_name>
+npm install -g tonos-se
 ```
 
 ## Usage
@@ -47,7 +52,7 @@ tonos-se status # Show running status of applications
 
 ### Configuring ports
 
-You can set custom port for any application in the solution separately or setup using one command. To apply changes use restart command. Example:
+You can set custom port for any application in the solution separately or using one command. To apply a new changes use restart command. Example:
 
 ```sh
 tonos-se config --q-server-port 5000
@@ -68,11 +73,6 @@ tonos-se reset --force # Delete binary and data files and reinstall applications
 ```
 
 ## How it works
-
-The current solution consists of 2 repositories that solve a specific task.
-
-- ton-actions/tonos-se-binaries - application packs
-- ton-actions/tonos-se - CLI tool for manage applications
 
 ### First start process
 
