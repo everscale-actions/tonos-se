@@ -99,7 +99,7 @@ jobs:
           ! nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
           ! nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
-          ton-node config --DEFAULT_NGINX_PORT ${{ env.CUSTOM_NGINX_PORT }} --DEFAULT_ARANGO_PORT ${{ env.CUSTOM_ARANGO_PORT }} --ton-DEFAULT_NODE_PORT ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }}
+          ton-node config --nginx-port ${{ env.CUSTOM_NGINX_PORT }} --arango-port ${{ env.CUSTOM_ARANGO_PORT }} --ton-node-port ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }}
       - name: Run Node SE
         run: ton-node start
       - name: Ensure that ports are open
