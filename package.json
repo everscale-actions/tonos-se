@@ -1,13 +1,18 @@
 {
-    "name": "ton-node-se-setup",
-    "version": "1.0.0",
-    "description": "",
+    "name": "tonos-se-setup",
+    "version": "0.0.1",
+    "author": "Free TON Actions",
+    "license": "Apache-2.0",
+    "description": "CLI tool to install and manage Ton Node SE Components without Docker",
     "scripts": {
-        "prepublishOnly": "npm i",
-        "ton-node": "node ./bin/node-control.js"
+        "prepack": "npm i --production",
+        "postversion": "npm publish",
+        "postpublish": "git push origin --follow-tags",
+        "test": "echo \"No test specified\""
     },
+    "main": "./lib/tonos-se.js",
     "bin": {
-        "ton-node": "./bin/node-control.js"
+        "tonos-se": "./bin/tonos-se.js"
     },
     "repository": {
         "type": "git",
@@ -15,11 +20,10 @@
     },
     "keywords": [
         "ton",
+        "tonos",
         "node",
-        "setup"
+        "cli"
     ],
-    "author": "Alexander Salamatov",
-    "license": "Apache-2.0",
     "bugs": {
         "url": "https://github.com/ton-actions/node-setup/issues"
     },

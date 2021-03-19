@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const commandLineArgs = require('command-line-args');
-const control = require('../lib/control');
+const control = require('../lib/tonos-se');
 /* first - parse the main command */
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
