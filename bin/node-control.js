@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-require('../lib/global.js');
-
 const commandLineArgs = require('command-line-args');
 const control = require('../lib/control');
 /* first - parse the main command */
