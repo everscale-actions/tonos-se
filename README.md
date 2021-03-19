@@ -31,21 +31,22 @@ npm install -g <package_name>
 
 ## Usage
 
-We tried to create easy to use application. So here are a few native commands you needed.
+We created easy to use application. So here are a few native commands you needed.
+
+### Base commands
 
 ```sh
 ton-node start # Start all necessary applications
 ton-node stop # Stop all applications
+ton-node restart # Restart all applications
 ton-node status # Show running status of applications
-ton-node reset # Delete all data and reinstall applications
-ton-node config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433
 ```
 
 > Note: for a first start ton-node will download an application pack for your operating system, unpack it to '.server' folder inside the CLI tool. Since that moment all necessary files like applications, configuration, data and log files will be placed here. And you can do deep configuring, backup or experiments if you want.
 
 ### Configuring ports
 
-You can set custom port for any application in the solution separately or setup using one command. Example:
+You can set custom port for any application in the solution separately or setup using one command. To apply changes use restart command. Example:
 
 ```sh
 ton-node config --q-server-port 5000
@@ -53,16 +54,19 @@ ton-node config --nginx-port 8082
 ton-node config --ton-node-port 55443
 ton-node config --arango-port 7433
 ton-node config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433
-```
-
-To apply changes restart it using commands
-
-```sh
-ton-node config stop
-ton-node config start
+ton-node restart # to apply new changes
 ```
 
 <img width="1014" alt="Screenshot 2021-03-17 at 15 05 50" src="https://user-images.githubusercontent.com/54890287/111464789-4f17b380-8732-11eb-8983-f012c24c2c59.png">
+
+### Delete applications and data
+
+Sometimes we want to reset settings or application to the default state. Use these commands to do that:
+
+```sh
+ton-node reset # Delete only binary files without data and log files
+ton-node reset --force # Delete binary and data files and reinstall applications
+```
 
 ## How it works
 
@@ -84,7 +88,14 @@ To make the process of building fast and easy we use Github Actions and Workflow
 
 > Note: release has the same version of ton node's version available releases published.
 
-### How to build custom version
+### How to build custom application pack
 
-If you want you can change usage versions to custom and create your own application pack.  
-To build your own binary fork the original repository. Then you need to enable GitHub actions to build it. To start building your own custom application packs you need to edit ...
+It is possible to use custom versions or default config files of any application inside the application pack. Just fork [ton-actions/node-se-binaries](https://github.com/ton-actions/node-se-binaries), enable GitHub actions. And apply your changes.
+
+<img width="891" alt="Screenshot 2021-03-19 at 13 17 38" src="https://user-images.githubusercontent.com/54890287/111765582-967a7d00-88b5-11eb-82ec-6fae3902210c.png">
+
+The Magic of creating applications pack is described in main.yml workflow file. Feel free to read the documentation about a structure and details on the main page [ton-actions/node-se-binaries](https://github.com/ton-actions/node-se-binaries).
+
+### Use custom application pack
+
+After you create and test your own application pack time to use it. Follow Releases page and download tar.gz archive for your Operating System. Then put the archive in **.cache** folder. Replace the file if necessary and use reset command to start using your own application pack.
