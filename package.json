@@ -33,14 +33,14 @@
         "arangojs": "^7.3.0",
         "axios": "^0.21.1",
         "command-line-args": "^5.1.1",
-        "fs-extra": "^9.1.0",
         "is-running": "^2.1.0",
         "json-override": "^0.2.0",
         "progress": "^2.0.3",
         "replace-in-file": "^6.2.0",
         "rimraf": "^2.6.3",
         "tar": "^6.1.0",
-        "wait-on": "^5.3.0"
+        "wait-on": "^5.3.0",
+        "yaml": "^1.10.2"
     },
     "devDependencies": {
         "eslint": "^7.21.0",
