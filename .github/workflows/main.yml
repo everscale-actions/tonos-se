@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - "README.md"
   pull_request:
-    types: [labeled]
+    types: [ labeled ]
 
 env:
   DEFAULT_NGINX_PORT: 8080
@@ -39,37 +39,28 @@ jobs:
         # disable matrix die to billing limits
         # node-version: [ 12.x, 15.x ]
         # os: [ ubuntu, macos, windows ]
-        node-version: [14.x]
-        os: [ubuntu]
+        node-version: [ 14.x ]
+        os: [ ubuntu ]
 
     runs-on: ${{ matrix.os }}-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          path: cli
-      - uses: actions/checkout@v2
-        with:
-          repository: tonlabs/ton-client-js
-          path: ton-client-js
       - name: "Use Node.js: ${{ matrix.node-version }} OS: ${{matrix.os}}"
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Restore CLI
-        working-directory: cli
+      - uses: actions/checkout@v2
+        with:
+          path: tonos-se
+      - uses: actions/checkout@v2
+        with:
+          repository: tonlabs/ton-client-js
+          path: ton-client-js
+      - name: Install tonos-se tools
+        working-directory: tonos-se
         run: |
           npm i
           npm i -g
-      - name: Run TON OS SE
-        run: tonos-se start
-      - name: Ensure that ports are open
-        run: |
-          nc -vz localhost ${{ env.DEFAULT_NGINX_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_NODE_REQUESTS_PORT }}
       - name: Build ton-client-js/packages/core
         working-directory: ton-client-js/packages/core
         run: |
@@ -80,14 +71,24 @@ jobs:
         run: |
           npm i
           tsc
+      - name: Restore packages ton-client-js/packages/tests-node
+        working-directory: ton-client-js/packages/tests-node
+        run: npm i
+      - name: Run TON OS SE
+        run: tonos-se start
+      - name: Ensure that ports are open
+        run: |
+          nc -vz localhost ${{ env.DEFAULT_NGINX_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
+          nc -vz localhost ${{ env.DEFAULT_NODE_REQUESTS_PORT }}
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
           TON_NETWORK_ADDRESS: http://localhost:${{ env.DEFAULT_NGINX_PORT }}
-        run: |
-          npm i
-          node run
+        run: node run
       - name: Stop TON OS SE
         run: tonos-se stop
       - name: Ensure that ports are closed
@@ -119,9 +120,7 @@ jobs:
         env:
           USE_NODE_SE: true
           TON_NETWORK_ADDRESS: http://localhost:${{ env.CUSTOM_NGINX_PORT }}
-        run: |
-          npm i
-          node run
+        run: node run
       - name: Stop TON OS SE
         run: tonos-se stop
       - name: Ensure that ports are closed
