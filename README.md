@@ -55,11 +55,16 @@ tonos-se status # Show running status of applications
 You can set custom port for any application in the solution separately or using one command. To apply a new changes use restart command. Example:
 
 ```sh
-tonos-se config --q-server-port 5000
-tonos-se config --nginx-port 8082
-tonos-se config --ton-node-port 55443
-tonos-se config --arango-port 7433
-tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433
+# Configure listening ports for internal applications
+tonos-se config --nginx-port 8082 # Nginx
+tonos-se config --q-server-port 5000 # Q Server
+tonos-se config --ton-node-port 50400 # Ton Node
+tonos-se config --ton-node-requests-port 7000 # Ton Node Kafka
+tonos-se config --arango-port 7433 # Arango DB
+tonos-se config --node-release 0.25.0 # Available versions could be found here: https://github.com/ton-actions/tonos-se-binaries/releases.
+tonos-se config --release-url https://github.com/example/example/releases # Use this parameter if you use fork of https://github.com/ton-actions/tonos-se-binaries to build your custom application pack
+
+tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433 --ton-node-requests-port 7000 # it is possible to set all parameters using one command
 tonos-se restart # to apply new changes
 ```
 

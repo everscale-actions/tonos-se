@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const commandLineArgs = require('command-line-args');
+const getUsage = require('command-line-usage');
 const control = require('../lib/tonos-se');
 /* first - parse the main command */
 const mainDefinitions = [
@@ -12,8 +13,50 @@ const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true 
 const argv = mainOptions._unknown || [];
 
 async function main() {
-  console.log(mainOptions);
+  if (mainOptions.help === true) {
+    mainOptions.command = 'help';
+  }
   switch (mainOptions.command) {
+    case 'help':
+
+      // eslint-disable-next-line no-case-declarations
+      const sections = [
+        {
+          header: 'TONOS SE CLI',
+          content: 'Easy install, configure and manage TON OS Startup Edition components without Docker.',
+        },
+        {
+          header: 'Synopsis',
+          content: `$ ${global.appName} <command> <options>`,
+        },
+        {
+          header: 'Command List',
+          content: [
+            { name: 'help', summary: 'Display help information.' },
+            { name: 'start | stop | restart', summary: 'Start, stop or restart necessary services.' },
+            { name: 'config', summary: 'Show and configure listening ports and other options. Follow \'config options\' in this help section to get details.' },
+            { name: 'reset', summary: 'Soft remove internal applications without touching data files. Use --hard option for removing whole applications and data files.' },
+          ],
+        },
+        {
+          header: 'config <options>',
+          content: [
+            { name: '--q-server-port', summary: 'Set listening port for Q-Server' },
+            { name: '--nginx-port', summary: 'Set listening port for Nginx' },
+            { name: '--ton-node-port', summary: 'Set listening port for Ton Node' },
+            { name: '--ton-node-requests-port', summary: 'Set listening port for Ton Node Kafka' },
+            { name: '--arango-port', summary: 'Set listening port for ArangoDB' },
+            { name: '--node-release', summary: 'Set a version of applications pack. Available versions: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
+            { name: '--release-url', summary: 'Set a GitHub release page. Default: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
+          ],
+        },
+        {
+          content: 'Project home: {underline https://github.com/ton-actions/tonos-se}',
+        },
+      ];
+
+      console.log(getUsage(sections));
+      break;
     case 'start':
       await control.start();
       break;
