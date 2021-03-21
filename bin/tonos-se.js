@@ -21,10 +21,10 @@ async function main() {
     case 'reset':
       // eslint-disable-next-line no-case-declarations
       const resetDefenitions = [
-        { name: 'force', type: Boolean },
+        { name: 'hard', type: Boolean },
       ];
 
-      await control.reset(commandLineArgs(resetDefenitions, { argv }).force);
+      await control.reset(commandLineArgs(resetDefenitions, { argv }).hard);
       break;
     case 'restart':
       await control.restart();
