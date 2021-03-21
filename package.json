@@ -34,6 +34,7 @@
         "arangojs": "^7.3.0",
         "axios": "^0.21.1",
         "command-line-args": "^5.1.1",
+        "command-line-usage": "^6.1.1",
         "is-running": "^2.1.0",
         "json-override": "^0.2.0",
         "progress": "^2.0.3",
