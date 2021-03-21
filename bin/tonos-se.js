@@ -91,7 +91,7 @@ async function main() {
       // show current config
       // eslint-disable-next-line no-case-declarations
       const newSettings = commandLineArgs(configDefenitions, { argv });
-      if (Object.entries(newSettings).length === 0) {
+      if (Object.keys(newSettings).length === 0) {
         console.log(control.config.get());
       } else {
         control.config.set(newSettings);
