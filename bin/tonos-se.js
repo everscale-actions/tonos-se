@@ -75,7 +75,14 @@ async function main() {
       await control.restart();
       break;
     case 'status':
-      await control.status();
+      // eslint-disable-next-line no-case-declarations
+      const statuses = await control.status();
+
+      statuses.forEach((s) => {
+        const statusText = s.isRunning ? `running. Pid: ${s.pid}` : 'stopped';
+        process.stdout.write(`Service ${s.serviceName} is ${statusText}\n`);
+      });
+
       break;
     case 'config':
       // eslint-disable-next-line no-case-declarations
