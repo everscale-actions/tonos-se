@@ -7,19 +7,11 @@ on:
     paths-ignore:
       - "README.md"
   pull_request:
-    types: [ labeled ]
+    types: [labeled]
 
 env:
-  DEFAULT_NGINX_PORT: 8080
-  DEFAULT_ARANGO_PORT: 8529
-  DEFAULT_QSERVER_PORT: 4000
-  DEFAULT_NODE_PORT: 40301
-  DEFAULT_NODE_REQUESTS_PORT: 3000
-  CUSTOM_NGINX_PORT: 8881
-  CUSTOM_ARANGO_PORT: 8882
-  CUSTOM_QSERVER_PORT: 8883
-  CUSTOM_NODE_PORT: 8884
-  CUSTOM_NODE_REQUESTS_PORT: 8885
+  DEFAULT_PORTS: '{"nginx":8080,"arango":8529,"qserver":4000,"node":40301,"requests":3000}'
+  CUSTOM_PORTS: '{"nginx":8881,"arango":8882,"qserver":8883,"node":8884,"requests":8885}'
 
 jobs:
   labels:
@@ -39,12 +31,19 @@ jobs:
         # disable matrix die to billing limits
         # node-version: [ 12.x, 15.x ]
         # os: [ ubuntu, macos, windows ]
-        node-version: [ 14.x ]
-        os: [ ubuntu ]
-
+        node-version: [14.x]
+        os: [ubuntu]
     runs-on: ${{ matrix.os }}-latest
-
     steps:
+      - name: Prepare envs
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.exportVariable('DEFAULT_PORTS_ARRAY', Object.values(JSON.parse(process.env.DEFAULT_PORTS)).join(' '));
+            var customPorts = JSON.parse(process.env.CUSTOM_PORTS);            
+            core.exportVariable('CUSTOM_PORTS_ARRAY', Object.values(customPorts).join(' '));
+            Object.keys(customPorts).forEach((name) => core.exportVariable(`CUSTOM_PORTS_${name.toUpperCase()}`, customPorts[name]));
+
       - name: "Use Node.js: ${{ matrix.node-version }} OS: ${{matrix.os}}"
         uses: actions/setup-node@v1
         with:
@@ -77,56 +76,32 @@ jobs:
       - name: Run TON OS SE
         run: tonos-se start
       - name: Ensure that ports are open
-        run: |
-          nc -vz localhost ${{ env.DEFAULT_NGINX_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
-          nc -vz localhost ${{ env.DEFAULT_NODE_REQUESTS_PORT }}
+        run: for port in $DEFAULT_PORTS_ARRAY; do nc -vz localhost $port; done
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
-          TON_NETWORK_ADDRESS: http://localhost:${{ env.DEFAULT_NGINX_PORT }}
+          TON_NETWORK_ADDRESS: http://localhost:${{ fromJson(env.DEFAULT_PORTS).nginx }}
         run: node run
       - name: Stop TON OS SE
         run: tonos-se stop
-      - name: Ensure that ports are closed
-        run: |
-          ! nc -vz localhost ${{ env.DEFAULT_NGINX_PORT }}
-          ! nc -vz localhost ${{ env.DEFAULT_ARANGO_PORT }}
-          ! nc -vz localhost ${{ env.DEFAULT_QSERVER_PORT }}
-          ! nc -vz localhost ${{ env.DEFAULT_NODE_PORT }}
-          ! nc -vz localhost ${{ env.DEFAULT_NODE_REQUESTS_PORT }}
+      - name: Ensure that ports are open
+        run: for port in $DEFAULT_PORTS_ARRAY; do ! nc -vz localhost $port; done
       - name: Change default ports
         run: |
-          ! nc -vz localhost ${{ env.CUSTOM_NGINX_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
-          tonos-se config --nginx-port ${{ env.CUSTOM_NGINX_PORT }} --arango-port ${{ env.CUSTOM_ARANGO_PORT }} --ton-node-port ${{ env.CUSTOM_NODE_PORT }} --q-server-port ${{ env.CUSTOM_QSERVER_PORT }} --ton-node-requests-port ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
+          for port in $CUSTOM_PORTS_ARRAY; do ! nc -vz localhost $port; done
+          tonos-se config --nginx-port ${{ env.CUSTOM_PORTS_NGINX }} --arango-port ${{ env.CUSTOM_PORTS_ARANGO }} --ton-node-port ${{ env.CUSTOM_PORTS_NODE }} --q-server-port ${{ env.CUSTOM_PORTS_QSERVER }} --ton-node-requests-port ${{ env.CUSTOM_PORTS_REQUESTS }}
       - name: Run TON OS SE
         run: tonos-se start
       - name: Ensure that ports are open
-        run: |
-          nc -vz localhost ${{ env.CUSTOM_NGINX_PORT }}
-          nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
-          nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
-          nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
-          nc -vz localhost ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
+        run: for port in $CUSTOM_PORTS_ARRAY; do nc -vz localhost $port; done
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
-          TON_NETWORK_ADDRESS: http://localhost:${{ env.CUSTOM_NGINX_PORT }}
+          TON_NETWORK_ADDRESS: http://localhost:${{ env.CUSTOM_PORTS_NGINX }}
         run: node run
       - name: Stop TON OS SE
         run: tonos-se stop
       - name: Ensure that ports are closed
-        run: |
-          ! nc -vz localhost ${{ env.CUSTOM_NGINX_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_ARANGO_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_QSERVER_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_NODE_PORT }}
-          ! nc -vz localhost ${{ env.CUSTOM_NODE_REQUESTS_PORT }}
+        run: for port in $CUSTOM_PORTS_ARRAY; do ! nc -vz localhost $port; done
