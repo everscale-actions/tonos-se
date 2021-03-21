@@ -41,6 +41,15 @@ npm install -g tonos-se
 
 We created easy to use application. So here are a few native commands you needed.
 
+### First start
+
+```sh
+tonos-se start # Start all necessary applications
+```
+
+TONOS SE downloads an application pack for your operating system, unpacks it to '.server' folder inside the CLI tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
+
+
 ### Base commands
 
 ```sh
@@ -78,12 +87,6 @@ tonos-se reset --hard # Delete binary and data files and reinstall applications
 ```
 
 ## How it works
-
-### First start process
-
-TONOS SE downloads an application pack for your operating system, unpack it to '.server' folder inside the CLI tool. Since that moment all necessary files like applications, configuration, data and log files will be placed here. And you can do deep configuring, backup or experiments if you want.
-
-<img width="1014" alt="Screenshot 2021-03-17 at 15 05 50" src="https://user-images.githubusercontent.com/54890287/111464789-4f17b380-8732-11eb-8983-f012c24c2c59.png">
 
 ### Prepare application pack
 
