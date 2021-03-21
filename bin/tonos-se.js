@@ -5,12 +5,14 @@ const control = require('../lib/tonos-se');
 /* first - parse the main command */
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
+  { name: 'help', alias: 'h', type: Boolean },
 ];
 const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
 // eslint-disable-next-line no-underscore-dangle
 const argv = mainOptions._unknown || [];
 
 async function main() {
+  console.log(mainOptions);
   switch (mainOptions.command) {
     case 'start':
       await control.start();
@@ -43,12 +45,18 @@ async function main() {
         { name: 'node-release', type: String },
       ];
 
+      // show current config
       // eslint-disable-next-line no-case-declarations
       const newSettings = commandLineArgs(configDefenitions, { argv });
+      if (Object.entries(newSettings).length === 0) {
+        console.log(control.config.get());
+      } else {
+        control.config.set(newSettings);
+      }
 
-      control.config(newSettings);
       break;
     default:
+      console.log(`Unknown command. Use command '${global.appName} --help' to list available commands`);
       break;
   }
 }
