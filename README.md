@@ -50,7 +50,7 @@ tonos-se start # Start all necessary applications
 TONOS SE downloads an application pack for your operating system, unpacks it to '.server' folder inside the CLI tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
 
 
-### Base commands
+### Basic commands
 
 ```sh
 tonos-se start # Start all necessary applications
@@ -59,25 +59,39 @@ tonos-se restart # Restart all applications
 tonos-se status # Show running status of applications
 ```
 
+![render1616362639311](https://user-images.githubusercontent.com/54890287/111921666-ce94e200-8aa6-11eb-935e-b8e89536adea.gif)
+
 ### Configuring ports
 
 You can set custom port for any application in the solution separately or using one command. To apply a new changes use restart command. Example:
 
 ```sh
-# Configure listening ports for internal applications
 tonos-se config --nginx-port 8082 # Nginx
 tonos-se config --q-server-port 5000 # Q Server
 tonos-se config --ton-node-port 50400 # Ton Node
 tonos-se config --ton-node-requests-port 7000 # Ton Node Kafka
 tonos-se config --arango-port 7433 # Arango DB
-tonos-se config --node-release 0.25.0 # Available versions could be found here: https://github.com/ton-actions/tonos-se-binaries/releases.
-tonos-se config --release-url https://github.com/example/example/releases # Use this parameter if you use fork of https://github.com/ton-actions/tonos-se-binaries to build your custom application pack
 
-tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433 --ton-node-requests-port 7000 # it is possible to set all parameters using one command
+# It is possible to set all parameters using one command
+tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433 --ton-node-requests-port 7000
+
+# To apply new changes this command
+tonos-se restart
+```
+
+### Configuring usage version and repository
+
+We thought it would be convenient to use as the same version for our application packs as ton-node. So after publishing a new version of application pack you might deside upgrade your current version to a new one. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries)
+
+```sh
+tonos-se config --node-release 0.25.0
+tonos-se config --release-url https://github.com/example/example/releases 
+
+# To apply new changes this command
 tonos-se restart # to apply new changes
 ```
 
-### Delete applications and data
+### Delete applications or data files
 
 Sometimes we want to reset settings or application to the default state. Use these commands to do that:
 
