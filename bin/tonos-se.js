@@ -59,14 +59,18 @@ async function main() {
 
       console.log(getUsage(sections));
       break;
+
     case 'start':
+    case 'restart':
+      if (mainOptions.command === 'restart') {
+        await control.stop();
+      }
       try {
         await control.start();
       } catch (ex) {
         if (ex instanceof PortsAlreadyInUseError) {
-          ex.statuses.forEach((ps) => {
-            process.stderr.write(`Service ${ps.serviceName} port ${ps.port} is already in use\n`);
-          });
+          ex.statuses
+            .forEach((ps) => process.stderr.write(`Service ${ps.serviceName} port ${ps.port} is already in use\n`));
           return;
         }
         throw ex;
@@ -81,11 +85,7 @@ async function main() {
       const resetDefenitions = [
         { name: 'hard', type: Boolean },
       ];
-
       await control.reset(commandLineArgs(resetDefenitions, { argv }).hard);
-      break;
-    case 'restart':
-      await control.restart();
       break;
     case 'status':
       // eslint-disable-next-line no-case-declarations
