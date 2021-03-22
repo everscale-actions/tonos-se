@@ -3,6 +3,8 @@
 const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const control = require('../lib/tonos-se');
+const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
+
 /* first - parse the main command */
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
@@ -58,7 +60,18 @@ async function main() {
       console.log(getUsage(sections));
       break;
     case 'start':
-      await control.start();
+      try {
+        await control.start();
+      } catch (ex) {
+        if (ex instanceof PortsAlreadyInUseError) {
+          ex.statuses.forEach((ps) => {
+            process.stderr.write(`Service ${ps.serviceName} port ${ps.port} is already in use\n`);
+          });
+          return;
+        }
+        throw ex;
+      }
+
       break;
     case 'stop':
       await control.stop();
