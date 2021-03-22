@@ -3,7 +3,7 @@
 
 # TONOS SE
 
-This solution provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker. 
+This solution provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker.
 
 > [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) is a local blockchain that developer can run on their machine in one click. See the [TON Labs TON OS SE documentation](https://docs.ton.dev/86757ecb2/p/19d886-ton-os-se) for detailed information.
 
@@ -51,21 +51,30 @@ tonos-se start # Start all necessary applications
 
 TONOS SE downloads an application pack for your operating system, unpacks it to '.server' folder inside the CLI tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
 
-
 ### Basic commands
 
+Use these commands to start, stop, restart and get status.
+
 ```sh
-tonos-se start # Start all necessary applications
-tonos-se stop # Stop all applications
-tonos-se restart # Restart all applications
-tonos-se status # Show running status of applications
+tonos-se start
+tonos-se stop
+tonos-se restart
+tonos-se status
 ```
 
 ![render1616362639311](https://user-images.githubusercontent.com/54890287/111921666-ce94e200-8aa6-11eb-935e-b8e89536adea.gif)
 
 ### Configuring ports
 
-You can set custom port for any application in the solution separately or using one command. To apply a new changes use restart command. Example:
+To get current configuration just run _config_ command without parameters.yml
+
+```sh
+tonos-se config
+```
+
+To set a custom port for any application in the solution separately or using one command. To apply new changes use _restart_ command.
+
+> We strongly do not recommend you to use ports less than 1024. Some Operating Systems have limitations about it.
 
 ```sh
 tonos-se config --nginx-port 8082 # Nginx
@@ -77,7 +86,7 @@ tonos-se config --arango-port 7433 # Arango DB
 # It is possible to set all parameters using one command
 tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --arango-port 7433 --ton-node-requests-port 7000
 
-# To apply new changes this command
+# To apply new changes
 tonos-se restart
 ```
 
@@ -87,10 +96,10 @@ We thought it would be convenient to use as the same version for our application
 
 ```sh
 tonos-se config --node-release 0.25.0
-tonos-se config --release-url https://github.com/example/example/releases 
+tonos-se config --release-url https://github.com/example/example/releases
 
 # To apply new changes this command
-tonos-se restart # to apply new changes
+tonos-se restart
 ```
 
 ### Delete applications or data files
