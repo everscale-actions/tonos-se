@@ -3,9 +3,11 @@
 
 # TONOS SE
 
-This solution provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker. And also provides NPM Package for a quick run locally using CLI depends on your Operation System.
+This solution provides standalone binary components and configuration files to start [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) for Linux, macOS, and Windows systems without Docker. 
 
-The current solution consists of 2 repositories that solve a specific task.
+> [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) is a local blockchain that developer can run on their machine in one click. See the [TON Labs TON OS SE documentation](https://docs.ton.dev/86757ecb2/p/19d886-ton-os-se) for detailed information.
+
+And also provides NPM Package for a quick run locally using CLI depends on your Operation System. The current solution consists of 2 repositories that solve a specific task.
 
 - ton-actions/tonos-se-binaries - application packs includes binaries and configuration files
 - ton-actions/tonos-se - CLI tool for install and manage TONOS SE (NPM Package)
