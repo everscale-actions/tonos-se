@@ -107,8 +107,10 @@ tonos-se restart
 Sometimes we want to reset settings or application to the default state. Use these commands to do that:
 
 ```sh
-tonos-se reset # Delete only binary files without data and log files
-tonos-se reset --hard # Delete binary and data files and reinstall applications
+# Delete binary files and current configuration. Data and log files will not be removed.
+tonos-se reset
+# Delete binary and data files and reinstall applications
+tonos-se reset --hard
 ```
 
 ## How it works
