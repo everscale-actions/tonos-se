@@ -49,7 +49,7 @@ async function main() {
             { name: '--ton-node-requests-port', summary: 'Set listening port for Ton Node Kafka' },
             { name: '--arango-port', summary: 'Set listening port for ArangoDB' },
             { name: '--node-release', summary: 'Set a version of applications pack. Available versions: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
-            { name: '--release-url', summary: 'Set a GitHub release page. Default: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
+            { name: '--github-binaries-repository', summary: 'Set a GitHub release page. Default: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
           ],
         },
         {
@@ -106,6 +106,7 @@ async function main() {
         { name: 'q-server-port', type: Number },
         { name: 'ton-node-requests-port', type: Number },
         { name: 'node-release', type: String },
+        { name: 'github-binaries-repository', type: String },
       ];
 
       // show current config
