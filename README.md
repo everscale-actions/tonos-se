@@ -7,10 +7,10 @@ This solution provides standalone binary components and configuration files to s
 
 > [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) is a local blockchain that developer can run on their machine in one click. See the [TON Labs TON OS SE documentation](https://docs.ton.dev/86757ecb2/p/19d886-ton-os-se) for detailed information.
 
-And also provides NPM Package for a quick run locally using CLI depends on your Operation System. The current solution consists of 2 repositories that solve a specific task.
+And also provides NPM Package for a quick run locally using CLI depends on your Operating System. The current solution consists of 2 repositories that solve a specific task.
 
-- ton-actions/tonos-se-binaries - application packs includes binaries and configuration files
-- ton-actions/tonos-se - CLI tool for install and manage TONOS SE (NPM Package)
+- [ton-actions/tonos-se](https://github.com/ton-actions/tonos-se) - CLI tool for install and manage TONOS SE (NPM Package)
+- [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries) - additional repository for generating application packs includes binaries and configuration files for different Operating Systems.
 
 ## Features
 
@@ -49,7 +49,7 @@ We created easy to use application. So here are a few native commands you needed
 tonos-se start # Start all necessary applications
 ```
 
-TONOS SE downloads an application pack for your operating system, unpacks it to '.server' folder inside the CLI tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
+TONOS SE downloads an application pack for your Operating System, unpacks it to '.server' folder inside the CLI tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
 
 ### Basic commands
 
@@ -90,24 +90,22 @@ tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --a
 tonos-se restart
 ```
 
-### Configuring usage version and repository
+### Configuring version
+
+> Warning: use these configuration parameters if you understand what you do
 
 We thought it would be convenient to use as the same version for our application packs as ton-node. So after publishing a new version of application pack you might deside upgrade your current version to a new one. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries)
 
 ```sh
 tonos-se config --node-release 0.25.0
-tonos-se config --release-url https://github.com/example/example/releases
-
-# To apply new changes this command
-tonos-se restart
 ```
 
 ### Delete applications or data files
 
-Sometimes we want to reset settings or application to the default state. Use these commands to do that:
+Sometimes you might want to reset settings to the default state. Use these commands to do that:
 
 ```sh
-# Delete binary files and current configuration. Data and log files will not be removed.
+# Delete binary files and reset configuration to the default state. Data and log files will not be removed.
 tonos-se reset
 # Delete binary and data files and reinstall applications
 tonos-se reset --hard
@@ -119,12 +117,14 @@ tonos-se reset --hard
 
 To make the process of building fast and easy we use Github Actions and Workflow yml files to prepare three application packs for different operating systems: Linux, MacOS and Windows. A group of three application packs is called release. An application pack is a tar.gz archive that contains different application and configuration files for them like:
 
-- nginx
-- arangodb
-- q-server
-- ton node
+- Nginx
+- ArangoDB
+- Q Server
+- Ton Node
 
 <img width="1171" alt="Screenshot 2021-03-17 at 15 13 51" src="https://user-images.githubusercontent.com/54890287/111465671-715e0100-8733-11eb-8e9b-029bde427b93.png">
+
+If new version is released, the tool will automatically detect a new version of application pack, download it and install.
 
 > Note: release has the same version of ton node's version available releases published.
 
@@ -138,4 +138,9 @@ The Magic of creating applications pack is described in main.yml workflow file. 
 
 ### Use custom application pack
 
-After you create and test your own application pack time to use it. Follow Releases page and download tar.gz archive for your Operating System. Then put the archive in **.cache** folder. Replace the file if necessary and use reset command to start using your own application pack.
+After you create and test your own application pack time to use it. Change application pack's version or your GitHub repository.
+
+```sh
+tonos-se config --node-release 0.25.0
+tonos-se config --release-url example/example
+```
