@@ -22,9 +22,25 @@ And also provides NPM Package for a quick run locally using CLI depends on your 
 
 ## Installation
 
-TONOS SE requires [Node.js](https://nodejs.org/) v12+ to run.
+TONOS SE requires [Node.js](https://nodejs.org/) v12+ to run. Also Ton Node depends on libssl > 1.1. Please take care of the installation required tools and last updates for your Operating System.
 
-### Manual
+### Requirements
+
+#### Linux (Debian based)
+
+```sh
+sudo apt update && sudo apt install -y cmake pkg-config libssl-dev
+```
+
+#### Windows
+
+Install last updates and VC++ Runtime on Windows. Download and install it you can from the [latest supported Visual C++](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0) page.
+
+#### MacOS
+
+TODO
+
+### Manual installation
 
 ```sh
 git clone https://github.com/ton-actions/tonos-se
@@ -33,7 +49,7 @@ npm i
 npm i -g
 ```
 
-### Using global NPM package
+### Installation using global NPM package
 
 ```sh
 npm install -g tonos-se
@@ -74,7 +90,7 @@ tonos-se config
 
 To set a custom port for any application in the solution separately or using one command. To apply new changes use _restart_ command.
 
-> We strongly do not recommend you to use ports less than 1024. Some Operating Systems have limitations about it.
+> Warning: we strongly do not recommend you to use ports less than 1024. Some Operating Systems have restrictions about it.
 
 ```sh
 tonos-se config --nginx-port 8082 # Nginx
@@ -90,9 +106,9 @@ tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --a
 tonos-se restart
 ```
 
-### Configuring version
+### Configuring usage version
 
-> Warning: use these configuration parameters if you understand what you do
+> Warning: use this configuration parameter if you understand what you do
 
 We thought it would be convenient to use as the same version for our application packs as ton-node. So after publishing a new version of application pack you might deside upgrade your current version to a new one. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries)
 
