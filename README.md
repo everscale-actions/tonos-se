@@ -106,6 +106,10 @@ tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --a
 tonos-se restart
 ```
 
+Here is a real case when you might need to set custom ports. I have already run applications that are listening tonos-se’s default ports(8080, 4000, 40301, 3000, 8529). So I  expected to get a warning at while start and a proposal to set others. And finally I want a run tests from https://github.com/tonlabs/ton-client-js
+
+![render1616491093620](https://user-images.githubusercontent.com/54890287/112123185-149a9480-8bd2-11eb-8dd5-675cb7dd77dc.gif)
+
 ### Configuring usage version
 
 > Warning: use this configuration parameter if you understand what you do
