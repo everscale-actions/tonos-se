@@ -48,8 +48,8 @@ async function main() {
             { name: '--ton-node-port', summary: 'Set listening port for Ton Node' },
             { name: '--ton-node-requests-port', summary: 'Set listening port for Ton Node Kafka' },
             { name: '--arango-port', summary: 'Set listening port for ArangoDB' },
-            { name: '--node-release', summary: 'Set a version of applications pack. Available versions: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
-            { name: '--github-binaries-repository', summary: 'Set a GitHub release page. Default: {underline https://github.com/ton-actions/tonos-se-binaries/releases}' },
+            { name: '--node-release', summary: 'Set a version of applications pack' },
+            { name: '--github-binaries-repository', summary: 'GitHub repository with binaries. Default: {underline ton-actions/tonos-se-binaries}' },
           ],
         },
         {
@@ -67,10 +67,16 @@ async function main() {
       }
       try {
         await control.start();
+        const settings = control.config.get();
+        process.stderr.write('================================\n');
+
+        process.stderr.write(`GraphQL: http://localhost:${global.nginxPort}/graphql\n`);
+        process.stderr.write(`ArangoDB: http://localhost:${global.arangoPort}\n`);
       } catch (ex) {
         if (ex instanceof PortsAlreadyInUseError) {
           ex.statuses
             .forEach((ps) => process.stderr.write(`Service ${ps.serviceName} port ${ps.port} is already in use\n`));
+          process.stderr.write('Please change service port using command \'config <paramters>\'. To get more details use \'tonos-se --help\'\n');
           return;
         }
         throw ex;
