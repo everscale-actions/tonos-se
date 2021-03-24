@@ -2,6 +2,7 @@
 
 const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
+const boxen = require('boxen');
 const control = require('../lib/tonos-se');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
 const ReleaseNotFound = require('../lib/errors/release-not-found');
@@ -81,9 +82,8 @@ async function main() {
         }
         throw ex;
       }
-      process.stdout.write('================================\n');
-      process.stdout.write(`GraphQL: http://localhost:${global.nginxPort}/graphql\n`);
-      process.stdout.write(`ArangoDB: http://localhost:${global.arangoPort}\n`);
+
+      process.stdout.write(boxen(`GraphQL: http://localhost:${global.nginxPort}/graphql\nArangoDB: http://localhost:${global.arangoPort}\nServer folder: ${global.serverPath}`, { padding: 1, margin: 1, borderStyle: 'double' }));
       break;
     case 'stop':
       await control.stop();
@@ -100,7 +100,7 @@ async function main() {
       const statuses = await control.status();
 
       statuses.forEach((s) => {
-        const statusText = s.isRunning ? `running. Pid: ${s.pid}` : 'stopped';
+        const statusText = s.isRunning ? `running. [PID: ${s.pid}]` : 'stopped';
         process.stdout.write(`Service ${s.serviceName} is ${statusText}\n`);
       });
 
