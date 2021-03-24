@@ -4,6 +4,7 @@ const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const control = require('../lib/tonos-se');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
+const ReleaseNotFound = require('../lib/errors/release-not-found');
 
 /* first - parse the main command */
 const mainDefinitions = [
@@ -72,6 +73,10 @@ async function main() {
           ex.statuses
             .forEach((ps) => process.stderr.write(`Service ${ps.serviceName} port ${ps.port} is already in use\n`));
           process.stderr.write('Please change service port using command \'config <paramters>\'. To get more details use \'tonos-se --help\'\n');
+          return;
+        }
+        if (ex instanceof ReleaseNotFound) {
+          process.stderr.write(`${ex.message}\nUse ${global.appName} config --node-release to set correct version\n`);
           return;
         }
         throw ex;
