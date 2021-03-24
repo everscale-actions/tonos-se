@@ -4,9 +4,18 @@ const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const boxen = require('boxen');
 const cj = require('color-json');
+const Sentry = require('@sentry/node');
 const control = require('../lib/tonos-se');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
 const ReleaseNotFound = require('../lib/errors/release-not-found');
+
+require('@sentry/tracing');
+
+Sentry.init({
+  dsn: 'https://8b749c16284f4f55ab80fe52b72e66f1@o558177.ingest.sentry.io/5691337',
+  enabled: (process.env.TONOS_SE_SEND_DEBUG_INFO !== undefined),
+  tracesSampleRate: 1.0,
+});
 
 /* first - parse the main command */
 const mainDefinitions = [
@@ -50,6 +59,7 @@ async function main() {
             { name: '--arango-port', summary: 'Set listening port for ArangoDB' },
             { name: '--tonos-se-version', summary: 'Set a version of TON OS SE' },
             { name: '--github-binaries-repository', summary: 'GitHub repository with binaries. Default: {underline ton-actions/tonos-se-binaries}' },
+            { name: '--send-debug-info', summary: 'Send debug info to sentry to notify mainteiners. Default: false' },
           ],
         },
         {
@@ -113,6 +123,7 @@ async function main() {
         { name: 'ton-node-requests-port', type: Number },
         { name: 'tonos-se-version', type: String },
         { name: 'github-binaries-repository', type: String },
+        { name: 'send-debug-info', type: Boolean },
       ];
 
       // show current config
@@ -138,11 +149,22 @@ async function main() {
 }
 
 (async () => {
+  const transaction = Sentry.startTransaction({
+    op: 'main',
+    name: 'main transaction',
+  });
+
+  let exitCode = 0;
   try {
     await main();
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
+  } catch (ex) {
+    console.error(ex);
+    Sentry.captureException(ex);
+    exitCode = 1;
+  } finally {
+    transaction.finish();
   }
+  await Sentry.close();
+  process.exit(exitCode);
 }
 )();
