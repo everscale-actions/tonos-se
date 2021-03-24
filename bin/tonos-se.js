@@ -120,11 +120,11 @@ async function main() {
 
       // show current config
       // eslint-disable-next-line no-case-declarations
-      const newSettings = commandLineArgs(configDefenitions, { argv });
-      if (Object.keys(newSettings).length === 0) {
+      const config = commandLineArgs(configDefenitions, { argv });
+      if (Object.keys(config).length === 0) {
         process.stdout.write(cj(control.config.get()));
       } else {
-        control.config.set(newSettings);
+        control.config.set(config);
       }
       break;
     case 'version':
