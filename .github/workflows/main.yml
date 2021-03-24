@@ -13,6 +13,10 @@ env:
   DEFAULT_PORTS: '{"nginx":8080,"arango":8529,"qserver":4000,"node":40301,"requests":3000}'
   CUSTOM_PORTS: '{"nginx":8881,"arango":8882,"qserver":8883,"node":8884,"requests":8885}'
 
+defaults: 
+  run: 
+    shell: bash
+
 jobs:
   labels:
     name: Label taking off
@@ -28,11 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # disable matrix die to billing limits
-        # node-version: [ 12.x, 15.x ]
-        # os: [ ubuntu, macos, windows ]
-        node-version: [14.x]
-        os: [ubuntu]
+        node-version: [ 14.x ]
+        os: [ ubuntu, macos, windows ]
     runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Prepare envs
