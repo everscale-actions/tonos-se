@@ -119,7 +119,7 @@ Here is a real case when you might need to set custom ports. I have already run 
 We thought it would be convenient to use as the same version for our application packs as ton-node. So after publishing a new version of application pack you might deside upgrade your current version to a new one. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries)
 
 ```sh
-tonos-se config --node-release 0.25.0
+tonos-se config --tonos-se-version 0.25.0
 ```
 
 ### Delete applications or data files
@@ -163,6 +163,6 @@ The Magic of creating applications pack is described in main.yml workflow file. 
 After you create and test your own application pack time to use it. Change application pack's version or your GitHub repository.
 
 ```sh
-tonos-se config --node-release 0.25.0
+tonos-se config --tonos-se-version 0.25.0
 tonos-se config --release-url example/example
 ```

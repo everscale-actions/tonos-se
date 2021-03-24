@@ -51,7 +51,7 @@ async function main() {
             { name: '--ton-node-port', summary: 'Set listening port for Ton Node' },
             { name: '--ton-node-requests-port', summary: 'Set listening port for Ton Node Kafka' },
             { name: '--arango-port', summary: 'Set listening port for ArangoDB' },
-            { name: '--node-release', summary: 'Set a version of applications pack' },
+            { name: '--tonos-se-version', summary: 'Set a version of TON OS SE' },
             { name: '--github-binaries-repository', summary: 'GitHub repository with binaries. Default: {underline ton-actions/tonos-se-binaries}' },
           ],
         },
@@ -78,7 +78,7 @@ async function main() {
           return;
         }
         if (ex instanceof ReleaseNotFound) {
-          process.stderr.write(`${ex.message}\nUse '${global.appName} config --node-release <VERSION>' to fix the problem.\n`);
+          process.stderr.write(`${ex.message}\nUse '${global.appName} config --tonos-se-version <VERSION>' to fix the problem.\n`);
           return;
         }
         throw ex;
@@ -114,7 +114,7 @@ async function main() {
         { name: 'ton-node-port', type: Number },
         { name: 'q-server-port', type: Number },
         { name: 'ton-node-requests-port', type: Number },
-        { name: 'node-release', type: String },
+        { name: 'tonos-se-version', type: String },
         { name: 'github-binaries-repository', type: String },
       ];
 
