@@ -76,7 +76,7 @@ async function main() {
           return;
         }
         if (ex instanceof ReleaseNotFound) {
-          process.stderr.write(`${ex.message}\nUse ${global.appName} config --node-release to set correct version\n`);
+          process.stderr.write(`${ex.message}\nUse '${global.appName} config --node-release <VERSION>' to fix the problem.\n`);
           return;
         }
         throw ex;
