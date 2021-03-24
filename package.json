@@ -35,6 +35,7 @@
         "arangojs": "^7.3.0",
         "axios": "^0.21.1",
         "boxen": "^5.0.0",
+        "color-json": "^2.0.1",
         "command-line-args": "^5.1.1",
         "command-line-usage": "^6.1.1",
         "is-running": "^2.1.0",

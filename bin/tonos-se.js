@@ -3,6 +3,7 @@
 const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const boxen = require('boxen');
+const cj = require('color-json');
 const control = require('../lib/tonos-se');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
 const ReleaseNotFound = require('../lib/errors/release-not-found');
@@ -125,7 +126,11 @@ async function main() {
       } else {
         control.config.set(newSettings);
       }
-
+      break;
+    case 'version':
+      // eslint-disable-next-line no-case-declarations
+      const version = await control.version();
+      process.stdout.write(cj(version));
       break;
     default:
       console.log(`Unknown command. Use command '${global.appName} --help' to list available commands`);
