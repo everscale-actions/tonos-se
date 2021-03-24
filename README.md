@@ -38,14 +38,16 @@ Install last updates and VC++ Runtime on Windows. Download and install it you ca
 
 #### MacOS
 
-TODO
+```sh
+# The first time you try to install a package globally using npm, using the syntax npm install -g <package> on a Mac, or Linux, you might get a weird error, saying something like "Missing write access to /usr/local/lib/node_modules"
+sudo chown -R $USER /usr/local/lib/node_modules
+```
 
 ### Manual installation
 
 ```sh
 git clone https://github.com/ton-actions/tonos-se
 cd tonos-se
-npm i
 npm i -g
 ```
 
