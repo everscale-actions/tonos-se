@@ -67,7 +67,6 @@ async function main() {
       }
       try {
         await control.start();
-        const settings = control.config.get();
         process.stderr.write('================================\n');
 
         process.stderr.write(`GraphQL: http://localhost:${global.nginxPort}/graphql\n`);
