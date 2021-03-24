@@ -67,10 +67,6 @@ async function main() {
       }
       try {
         await control.start();
-        process.stderr.write('================================\n');
-
-        process.stderr.write(`GraphQL: http://localhost:${global.nginxPort}/graphql\n`);
-        process.stderr.write(`ArangoDB: http://localhost:${global.arangoPort}\n`);
       } catch (ex) {
         if (ex instanceof PortsAlreadyInUseError) {
           ex.statuses
@@ -80,7 +76,9 @@ async function main() {
         }
         throw ex;
       }
-
+      process.stdout.write('================================\n');
+      process.stdout.write(`GraphQL: http://localhost:${global.nginxPort}/graphql\n`);
+      process.stdout.write(`ArangoDB: http://localhost:${global.arangoPort}\n`);
       break;
     case 'stop':
       await control.stop();
