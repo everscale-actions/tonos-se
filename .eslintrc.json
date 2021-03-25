@@ -5,13 +5,23 @@
         "node": true
     },
     "extends": [
-        "airbnb-base"
+        "airbnb-base",
+        "plugin:node/recommended"
+    ],
+    "plugins": [
+        "json-format"
     ],
     "parserOptions": {
         "ecmaVersion": 12
     },
-    "rules": {
-        "no-console": "off",
-        "no-await-in-loop": "off"
+    "rules": {},
+    "settings": {
+        "json/sort-package-json": "standard",
+        "json/ignore-files": [
+            "**/package-lock.json"
+        ],
+        "json/json-with-comments-files": [
+            ".vscode/**"
+        ]
     }
 }

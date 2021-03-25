@@ -8,5 +8,5 @@
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
-  "files.eol": "\n"
+  "files.eol": "\n",
 }

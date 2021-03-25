@@ -4,23 +4,9 @@ const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const boxen = require('boxen');
 const cj = require('color-json');
-const semver = require('semver');
-const control = require('../lib/tonos-se');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
 const ReleaseNotFound = require('../lib/errors/release-not-found');
-const nodeVersion = require('../package.json').engines.node;
-
-if (!semver.satisfies(process.version, nodeVersion)) {
-  // Strip version range characters leaving the raw semantic version for output
-  const rawVersion = nodeVersion.replace(/[^\d.]*/, '');
-  process.stderr.write(
-    `${global.appName} requires at least Node v${rawVersion}. `
-      + `You have ${process.version}.\n`
-      + 'See https://github.com/ton-actions/tonos-se '
-      + 'for details.\n',
-  );
-  process.exit(1);
-}
+const tonos = require('../lib/tonos-se');
 
 /* first - parse the main command */
 const mainDefinitions = [
@@ -32,9 +18,7 @@ const argv = mainOptions._unknown || [];
 
 async function main() {
   switch (mainOptions.command) {
-    case 'help':
-
-      // eslint-disable-next-line no-case-declarations
+    case 'help': {
       const sections = [
         {
           header: 'TONOS SE CLI',
@@ -71,16 +55,16 @@ async function main() {
         },
       ];
 
-      console.log(getUsage(sections));
+      process.stdout.write(`${getUsage(sections)}\n`);
       break;
-
+    }
     case 'start':
-    case 'restart':
+    case 'restart': {
       if (mainOptions.command === 'restart') {
-        await control.stop();
+        await tonos.stop();
       }
       try {
-        await control.start();
+        await tonos.start();
       } catch (ex) {
         if (ex instanceof PortsAlreadyInUseError) {
           ex.statuses
@@ -97,19 +81,19 @@ async function main() {
 
       process.stdout.write(boxen(`GraphQL: http://localhost:${global.nginxPort}/graphql\nArangoDB: http://localhost:${global.arangoPort}\nServer folder: ${global.serverPath}`, { padding: 1, margin: 1, borderStyle: 'double' }));
       break;
+    }
     case 'stop':
-      await control.stop();
+      await tonos.stop();
       break;
-    case 'reset':
-      // eslint-disable-next-line no-case-declarations
+    case 'reset': {
       const resetDefenitions = [
         { name: 'hard', type: Boolean },
       ];
-      await control.reset(commandLineArgs(resetDefenitions, { argv }).hard);
+      await tonos.reset(commandLineArgs(resetDefenitions, { argv }).hard);
       break;
-    case 'status':
-      // eslint-disable-next-line no-case-declarations
-      const statuses = await control.status();
+    }
+    case 'status': {
+      const statuses = await tonos.status();
 
       statuses.forEach((s) => {
         const statusText = s.isRunning ? `running. [PID: ${s.pid}]` : 'stopped';
@@ -117,8 +101,8 @@ async function main() {
       });
 
       break;
-    case 'config':
-      // eslint-disable-next-line no-case-declarations
+    }
+    case 'config': {
       const configDefenitions = [
         { name: 'nginx-port', type: Number },
         { name: 'arango-port', type: Number },
@@ -130,23 +114,21 @@ async function main() {
       ];
 
       // show current config
-      // eslint-disable-next-line no-case-declarations
       const config = commandLineArgs(configDefenitions, { argv });
       if (Object.keys(config).length === 0) {
-        process.stdout.write(cj(control.config.get()));
-        process.stdout.write('\n');
+        process.stdout.write(`${cj(tonos.config.get())}\n`);
       } else {
-        control.config.set(config);
+        tonos.config.set(config);
       }
       break;
-    case 'version':
-      // eslint-disable-next-line no-case-declarations
-      const version = await control.version();
-      process.stdout.write(cj(version));
-      process.stdout.write('\n');
+    }
+    case 'version': {
+      const version = await tonos.version();
+      process.stdout.write(`${cj(version)}\n`);
       break;
+    }
     default:
-      console.log(`Unknown command. Use command '${global.appName} help' to list available commands`);
+      process.stdout.write(`Unknown command. Use command '${global.appName} help' to list available commands\n`);
       break;
   }
 }
@@ -154,9 +136,9 @@ async function main() {
 (async () => {
   try {
     await main();
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    process.exitCode = 1;
   }
-}
-)();
+})();
