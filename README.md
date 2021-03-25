@@ -85,7 +85,7 @@ tonos-se start
 tonos-se stop
 tonos-se restart
 tonos-se status
-tonos-se --help
+tonos-se help
 ```
 
 To get current settings just run _config_ command

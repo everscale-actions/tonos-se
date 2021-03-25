@@ -11,16 +11,12 @@ const ReleaseNotFound = require('../lib/errors/release-not-found');
 /* first - parse the main command */
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
-  { name: 'help', alias: 'h', type: Boolean },
 ];
 const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
 // eslint-disable-next-line no-underscore-dangle
 const argv = mainOptions._unknown || [];
 
 async function main() {
-  if (mainOptions.help === true) {
-    mainOptions.command = 'help';
-  }
   switch (mainOptions.command) {
     case 'help':
 
@@ -28,7 +24,7 @@ async function main() {
       const sections = [
         {
           header: 'TONOS SE CLI',
-          content: 'Easy install, configure and manage TON OS Startup Edition components without Docker.',
+          content: 'Easy install, configure and manage TON OS Startup Edition without Docker.',
         },
         {
           header: 'Synopsis',
@@ -37,10 +33,11 @@ async function main() {
         {
           header: 'Command List',
           content: [
-            { name: 'help', summary: 'Display help information.' },
             { name: 'start | stop | restart', summary: 'Start, stop or restart necessary services.' },
             { name: 'config', summary: 'Show and configure listening ports and other options. Follow \'config options\' in this help section to get details.' },
-            { name: 'reset', summary: 'Soft remove internal applications without touching data files. Use --hard option for removing whole applications and data files.' },
+            { name: 'reset', summary: 'Soft remove internal applications without data files. Use --hard option for removing whole applications and data files.' },
+            { name: 'status', summary: 'Display status.' },
+            { name: 'version', summary: 'Display version of applications.' },
           ],
         },
         {
@@ -74,7 +71,7 @@ async function main() {
         if (ex instanceof PortsAlreadyInUseError) {
           ex.statuses
             .forEach((ps) => process.stderr.write(`Service ${ps.serviceName} port ${ps.port} is already in use\n`));
-          process.stderr.write('Please change service port using command \'config <paramters>\'. To get more details use \'tonos-se --help\'\n');
+          process.stderr.write(`Please change service port using command 'config <paramters>'. To get more details use '${global.appName} help'\n`);
           return;
         }
         if (ex instanceof ReleaseNotFound) {
@@ -135,7 +132,7 @@ async function main() {
       process.stdout.write('\n');
       break;
     default:
-      console.log(`Unknown command. Use command '${global.appName} --help' to list available commands`);
+      console.log(`Unknown command. Use command '${global.appName} help' to list available commands`);
       break;
   }
 }
