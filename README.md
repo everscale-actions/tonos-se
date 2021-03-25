@@ -72,7 +72,7 @@ Before start tonos-se checks available versions for updating using hash sha256. 
 tonos-se start # Start all necessary applications
 ```
 
-'tonos-se' downloads an binary pack, unpacks it to '.server' folder inside the tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
+_tonos-se_ downloads an binary pack, unpacks it to '.server' folder inside the tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
 
 <img width="761" alt="Screenshot 2021-03-25 at 15 00 28" src="https://user-images.githubusercontent.com/54890287/112469751-e1dfd000-8d7a-11eb-840e-51fdd798a971.png">
 
@@ -94,7 +94,7 @@ To get current settings just run _config_ command
 tonos-se config
 ```
 
-![render1616362639311](https://user-images.githubusercontent.com/54890287/111921666-ce94e200-8aa6-11eb-935e-b8e89536adea.gif)
+<img width="761" alt="Screenshot 2021-03-25 at 16 19 18" src="https://user-images.githubusercontent.com/54890287/112479376-08efcf00-8d86-11eb-8fa8-9529a01649ef.png">
 
 To get versions of applications, available tonos-se binary packs or other informations use _version_ command
 
@@ -124,7 +124,7 @@ tonos-se config --q-server-port 5000 --nginx-port 8082 --ton-node-port 55443 --a
 tonos-se restart
 ```
 
-Here is a real case when you might need to set custom ports. I have already run applications that are listening tonos-se’s default ports(8080, 4000, 40301, 3000, 8529). So I expected to get a warning at while start and a proposal to set others. And finally I want a run tests from https://github.com/tonlabs/ton-client-js
+Here is a real case when you might need to set custom ports. I have already run applications that are listening _tonos-se_’s default ports(8080, 4000, 40301, 3000, 8529). So I expected to get a warning at while start and a proposal to set others. And finally I want a run tests from https://github.com/tonlabs/ton-client-js
 
 ![render1616491093620](https://user-images.githubusercontent.com/54890287/112123185-149a9480-8bd2-11eb-8dd5-675cb7dd77dc.gif)
 
