@@ -132,13 +132,19 @@ Here is a real case when you might need to set custom ports. I have already run 
 
 > Warning: use this configuration parameter if you understand what you do
 
-Be default CLI tool uses latest version of TON OS SE binary application pack. But you might want to downgrade to previous version for testing something or may be do some experiments, etc. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries). Use this command for setting up version you want.
+Be default _tonos-se_ uses latest version of TON OS SE binary application pack. But you might want to downgrade to previous version for testing something or may be do some experiments, etc. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries). Use this command for setting up version you want.
 
 ```sh
+# To display available versions use command
+tonos-se version
+
+# To change tonos-se versions use command
 tonos-se config --tonos-se-version 0.25.0
 ```
 
-The next start will verify the checksum and do automatically soft upgrade/downgrade your current version. But be careful using downgrade. This may cause the TON OS SE to behave strangely. If something goes wrong use the commands below to fix a potential problem.
+When the next happens, _tonos-se_ will verify the checksum and do automatically soft upgrade/downgrade your current version. But be careful using downgrade. This may cause the TON OS SE to behave strangely. If something goes wrong use the commands below to fix a potential problem.
+
+![render1616679986703-min](https://user-images.githubusercontent.com/54890287/112483378-02fbed00-8d8a-11eb-8a95-7f83e59af1c5.gif)
 
 ### Delete applications or data files
 
