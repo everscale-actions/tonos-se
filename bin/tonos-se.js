@@ -123,6 +123,7 @@ async function main() {
       const config = commandLineArgs(configDefenitions, { argv });
       if (Object.keys(config).length === 0) {
         process.stdout.write(cj(control.config.get()));
+        process.stdout.write('\n');
       } else {
         control.config.set(config);
       }
@@ -131,6 +132,7 @@ async function main() {
       // eslint-disable-next-line no-case-declarations
       const version = await control.version();
       process.stdout.write(cj(version));
+      process.stdout.write('\n');
       break;
     default:
       console.log(`Unknown command. Use command '${global.appName} --help' to list available commands`);
