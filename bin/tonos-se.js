@@ -4,9 +4,23 @@ const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const boxen = require('boxen');
 const cj = require('color-json');
+const semver = require('semver');
 const control = require('../lib/tonos-se');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
 const ReleaseNotFound = require('../lib/errors/release-not-found');
+const nodeVersion = require('../package.json').engines.node;
+
+if (!semver.satisfies(process.version, nodeVersion)) {
+  // Strip version range characters leaving the raw semantic version for output
+  const rawVersion = nodeVersion.replace(/[^\d.]*/, '');
+  process.stderr.write(
+    `${global.appName} requires at least Node v${rawVersion}. `
+      + `You have ${process.version}.\n`
+      + 'See https://github.com/ton-actions/tonos-se '
+      + 'for details.\n',
+  );
+  process.exit(1);
+}
 
 /* first - parse the main command */
 const mainDefinitions = [
