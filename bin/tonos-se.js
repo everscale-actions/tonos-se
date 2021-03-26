@@ -3,7 +3,6 @@
 const commandLineArgs = require('command-line-args');
 const getUsage = require('command-line-usage');
 const boxen = require('boxen');
-const cj = require('color-json');
 const PortsAlreadyInUseError = require('../lib/errors/ports-already-in-use');
 const ReleaseNotFound = require('../lib/errors/release-not-found');
 const tonos = require('../lib/tonos-se');
@@ -15,6 +14,10 @@ const mainDefinitions = [
 const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
 // eslint-disable-next-line no-underscore-dangle
 const argv = mainOptions._unknown || [];
+
+function cj(json) {
+  return JSON.stringify(json, null, 2);
+}
 
 async function main() {
   switch (mainOptions.command) {
