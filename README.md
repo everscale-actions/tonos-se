@@ -1,3 +1,5 @@
+[![Cross-Platform Compatibility](https://jstools.dev/img/badges/os-badges.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.ym)
+
 [![CLI](https://github.com/ton-actions/tonos-se/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.yml)
 [![Binaries](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/main.yml)
 
@@ -37,11 +39,9 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 
 #### MacOS or Linux Based Distributions
 
-The first time you try to install a package globally using npm, using the syntax npm install -g <package> on a Mac, or Linux, you might get a weird error, saying something like "Missing write access to /usr/local/lib/node_modules or /usr/local/bin". You can use [official guide to resolve the problem](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) or just grant permissions to the folders
+The first time you try to install a package globally using npm, using the syntax npm install -g <package> on a Mac, or Linux, you might get a weird error, saying something like "Missing write access to /usr/local/lib/node_modules or /usr/local/bin". You can use [official guide to resolve the problem](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) or just grant permissions to the particular folders like this:
 
 ```sh
-
-# Mac OS
 sudo chown -R $USER /usr/local/lib/node_modules
 sudo chown -R $USER /usr/local/bin
 ```
@@ -187,7 +187,7 @@ tonos-se config --github-binaries-repository example/example
 
 **Issue:** Subscribe for transactions with addresses (ABIv1) test fails on Windows.
 
-**Answer:** We found out some strange behaviour while using ton-client-js's tests on Windows. We guess it could be connected with some internal node's problem. But we found a workaround. We created an [issue](https://github.com/tonlabs/tonos-se/issues/13) and opened a [pull request](https://github.com/tonlabs/ton-client-js/pull/206) to solve the problem.
+**Answer:** We found out some strange behaviour while using ton-client-js's tests on Windows. We guess it could be connected with some internal node's problem. But we found a workaround. We created an [issue](https://github.com/tonlabs/tonos-se/issues/13) and opened a [pull request](https://github.com/tonlabs/ton-client-js/pull/206) to solve the problem. _UPD: pull request was successfully merged to master branch. To solve the problem pull last changes from [tonlabs/ton-client-js](https://github.com/tonlabs/ton-client-js)_ 
 
 ##
 
