@@ -13,8 +13,8 @@ env:
   DEFAULT_PORTS: '{"nginx":8080,"arango":8529,"qserver":4000,"node":40301,"requests":3000,"adnl":3030}'
   CUSTOM_PORTS: '{"nginx":8881,"arango":8882,"qserver":8883,"node":8884,"requests":8885,"adnl":8886}'
 
-defaults: 
-  run: 
+defaults:
+  run:
     shell: bash
 
 jobs:
@@ -32,8 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14.x ]
-        os: [ ubuntu, macos, windows ]
+        node-version: [14.x]
+        os: [ubuntu, macos, windows]
     runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Prepare envs
@@ -64,6 +64,10 @@ jobs:
         run: |
           npm i
           npm i -g
+
+      - name: Install Type Script
+        run: npm i -g typescript
+
       - name: Build ton-client-js/packages/core
         working-directory: ton-client-js/packages/core
         run: |
