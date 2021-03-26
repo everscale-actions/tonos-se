@@ -134,3 +134,20 @@ jobs:
           port: ${{ env.CUSTOM_PORTS_ARRAY }}
           needFail: "true"
           reverse: "true"
+
+  publish:
+    needs: tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.5
+      - uses: JS-DevTools/npm-publish@v1
+        id: npm-publish
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+      - uses: tvdias/github-tagger@v0.0.2
+        if: ${{ steps.npm-publish.outputs.type != 'none' && steps.npm-publish.outputs.dry-run != 'true' }}
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: 'v${{ steps.npm-publish.outputs.version }}'
