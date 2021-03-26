@@ -104,7 +104,6 @@ jobs:
           port: ${{ env.DEFAULT_PORTS_ARRAY }}
           needFail: "true"
           reverse: "true"
-          pause: 3000
 
       - name: Change default ports
         run: |
@@ -135,4 +134,3 @@ jobs:
           port: ${{ env.CUSTOM_PORTS_ARRAY }}
           needFail: "true"
           reverse: "true"
-          pause: 3000
