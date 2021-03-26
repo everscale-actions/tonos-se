@@ -1,6 +1,6 @@
 {
-  "name": "tonos-se-setup",
-  "version": "0.0.1",
+  "name": "tonos-se",
+  "version": "0.0.3",
   "author": "Free TON Actions",
   "license": "Apache-2.0",
   "engines": {
@@ -8,9 +8,6 @@
   },
   "description": "CLI tool to install and manage Ton Node SE without Docker",
   "scripts": {
-    "prepack": "npm i --production",
-    "postversion": "npm publish",
-    "postpublish": "git push origin --follow-tags",
     "test": "echo \"No test specified\""
   },
   "main": "./lib/tonos-se.js",
@@ -21,6 +18,12 @@
     "type": "git",
     "url": "https://github.com/ton-actions/tonos-se.git"
   },
+  "files": [
+    "bin/**/*",
+    "lib/**/*",
+    "LICENSE",
+    "README.md"
+  ],
   "keywords": [
     "ton",
     "tonos",
