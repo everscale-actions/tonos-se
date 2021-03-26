@@ -39,22 +39,25 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            core.exportVariable('DEFAULT_PORTS_ARRAY', Object.values(JSON.parse(process.env.DEFAULT_PORTS)).join(' '));
+            core.exportVariable('DEFAULT_PORTS_ARRAY', Object.values(JSON.parse(process.env.DEFAULT_PORTS)).join(','));
             var customPorts = JSON.parse(process.env.CUSTOM_PORTS);            
-            core.exportVariable('CUSTOM_PORTS_ARRAY', Object.values(customPorts).join(' '));
+            core.exportVariable('CUSTOM_PORTS_ARRAY', Object.values(customPorts).join(','));
             Object.keys(customPorts).forEach((name) => core.exportVariable(`CUSTOM_PORTS_${name.toUpperCase()}`, customPorts[name]));
 
       - name: "Use Node.js: ${{ matrix.node-version }} OS: ${{matrix.os}}"
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
       - uses: actions/checkout@v2
         with:
           path: tonos-se
+
       - uses: actions/checkout@v2
         with:
           repository: tonlabs/ton-client-js
           path: ton-client-js
+
       - name: Install tonos-se tools
         working-directory: tonos-se
         run: |
@@ -65,43 +68,71 @@ jobs:
         run: |
           npm i
           tsc
+
       - name: Build ton-client-js/packages/tests
         working-directory: ton-client-js/packages/tests
         run: |
           npm i
           tsc
+
       - name: Restore packages ton-client-js/packages/tests-node
         working-directory: ton-client-js/packages/tests-node
         run: npm i
+
       - name: Run TON OS SE
         run: tonos-se start
-      - name: Ensure that ports are open
-        run: for port in $DEFAULT_PORTS_ARRAY; do nc -vz localhost $port; done
+
+      - name: Ensure that ports are opened
+        uses: nrukavkov/open-ports-check-action@v1
+        with:
+          port: ${{ env.DEFAULT_PORTS_ARRAY }}
+          needFail: "true"
+
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
           TON_NETWORK_ADDRESS: http://localhost:${{ fromJson(env.DEFAULT_PORTS).nginx }}
         run: node run
+
       - name: Stop TON OS SE
         run: tonos-se stop
-      - name: Ensure that ports are open
-        run: for port in $DEFAULT_PORTS_ARRAY; do ! nc -vz localhost $port; done
+
+      - name: Ensure that ports are closed
+        uses: nrukavkov/open-ports-check-action@v1
+        with:
+          port: ${{ env.DEFAULT_PORTS_ARRAY }}
+          needFail: "true"
+          reverse: "true"
+          pause: 3000
+
       - name: Change default ports
         run: |
-          for port in $CUSTOM_PORTS_ARRAY; do ! nc -vz localhost $port; done
           tonos-se config --nginx-port ${{ env.CUSTOM_PORTS_NGINX }} --arango-port ${{ env.CUSTOM_PORTS_ARANGO }} --ton-node-port ${{ env.CUSTOM_PORTS_NODE }} --q-server-port ${{ env.CUSTOM_PORTS_QSERVER }} --ton-node-requests-port ${{ env.CUSTOM_PORTS_REQUESTS }}
+
       - name: Run TON OS SE
         run: tonos-se start
-      - name: Ensure that ports are open
-        run: for port in $CUSTOM_PORTS_ARRAY; do nc -vz localhost $port; done
+
+      - name: Ensure that ports are opened
+        uses: nrukavkov/open-ports-check-action@v1
+        with:
+          port: ${{ env.CUSTOM_PORTS_ARRAY }}
+          needFail: "true"
+
       - name: Run tests
         working-directory: ton-client-js/packages/tests-node
         env:
           USE_NODE_SE: true
           TON_NETWORK_ADDRESS: http://localhost:${{ env.CUSTOM_PORTS_NGINX }}
         run: node run
+
       - name: Stop TON OS SE
         run: tonos-se stop
+
       - name: Ensure that ports are closed
-        run: for port in $CUSTOM_PORTS_ARRAY; do ! nc -vz localhost $port; done
+        uses: nrukavkov/open-ports-check-action@v1
+        with:
+          port: ${{ env.CUSTOM_PORTS_ARRAY }}
+          needFail: "true"
+          reverse: "true"
+          pause: 3000
