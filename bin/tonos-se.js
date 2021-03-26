@@ -94,9 +94,8 @@ async function main() {
     }
     case 'status': {
       const statuses = await tonos.status();
-
       statuses.forEach((s) => {
-        const statusText = s.isRunning ? `running. [PID: ${s.pid}]` : 'stopped';
+        const statusText = s.isRunning ? `running. [PID:${s.pid} PORTS:${s.portStatuses.map((p) => p.port)}]` : 'stopped';
         process.stdout.write(`Service ${s.serviceName} is ${statusText}\n`);
       });
 
