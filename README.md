@@ -121,8 +121,7 @@ tonos-se config --ton-node-adnl-port 7001 # Ton Node: ADNL Listening Port
 tonos-se config --arango-port 7433 # ArangoDB Listening Port
 
 # It is possible to set all parameters using one command
-tonos-se config --q-server-port 5000 \
-  --nginx-port 8082 \
+tonos-se config --nginx-port 8082 \
   --q-server-port 5000 \
   --arango-port 7433 \
   --ton-node-port 55443 \
