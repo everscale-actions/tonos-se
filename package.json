@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node ./bin/tonos-se.js start",
     "stop": "node ./bin/tonos-se.js stop",
+    "postinstall": "node ./bin/tonos-se.js stop",
     "test": "echo \"No test specified\""
   },
   "main": "./lib/tonos-se.js",
@@ -42,6 +43,7 @@
     "command-line-usage": "^6.1.1",
     "is-running": "^2.1.0",
     "json-override": "^0.2.0",
+    "postinstall-postinstall": "^2.1.0",
     "progress": "^2.0.3",
     "resolve-dir": "^1.0.1",
     "rimraf": "^2.6.3",
