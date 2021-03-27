@@ -74,9 +74,9 @@ Before start tonos-se checks available versions for updating using hash sha256. 
 tonos-se start # Start all necessary applications
 ```
 
-_tonos-se_ downloads an binary pack, unpacks it to '.server' folder inside the tool. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
+_tonos-se_ downloads an binary pack, unpacks it to _userFolder/.tonos-se_. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
 
-<img width="761" alt="Screenshot 2021-03-25 at 15 00 28" src="https://user-images.githubusercontent.com/54890287/112469751-e1dfd000-8d7a-11eb-840e-51fdd798a971.png">
+<img width="859" alt="Screenshot 2021-03-27 at 16 56 54" src="https://user-images.githubusercontent.com/54890287/112723099-fad4b680-8f1d-11eb-8a9b-e2a3c45be21c.png">
 
 ### Basic commands
 
@@ -96,7 +96,7 @@ To get current settings just run _config_ command
 tonos-se config
 ```
 
-<img width="761" alt="Screenshot 2021-03-25 at 16 19 18" src="https://user-images.githubusercontent.com/54890287/112479376-08efcf00-8d86-11eb-8fa8-9529a01649ef.png">
+<img width="859" alt="Screenshot 2021-03-27 at 17 02 40" src="https://user-images.githubusercontent.com/54890287/112723179-543ce580-8f1e-11eb-875e-0df49e736ab2.png">
 
 To get versions of applications, available tonos-se binary packs or other informations use _version_ command
 
@@ -133,9 +133,9 @@ tonos-se config --q-server-port 5000 \
 tonos-se restart
 ```
 
-Here is a real case when you might need to set custom ports. I have already run applications that are listening _tonos-se_ ’s default ports(8080, 4000, 40301, 3000, 8529). So I expected to get a warning at while start and a proposal to set others. And finally, I want run tests from https://github.com/tonlabs/ton-client-js
+Here is a real case when ports are already used by some application.
 
-![render1616491093620](https://user-images.githubusercontent.com/54890287/112123185-149a9480-8bd2-11eb-8dd5-675cb7dd77dc.gif)
+![render1616856333863](https://user-images.githubusercontent.com/54890287/112724848-44290400-8f26-11eb-8af3-82214f93cc7d.gif)
 
 ### Configuring usage version
 
@@ -193,21 +193,21 @@ In building process is nothing special what you need to know. It is standart tas
 
 The general idea of the pipeline:
 
-- build and run _nodeos-se_
-- check the default ports are opened
-- run tests 
-- change [default ports](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L13) to the custom ports (env variable [CUSTOM_PORTS](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L14))
-- check the custom ports are opened
-- run tests
-- stop _nodeos-se_
-- check custom posts are closed
+1. build and run _nodeos-se_
+2. check the default ports are opened
+3. run tests 
+4. change [default ports](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L13) to the custom ports (env variable [CUSTOM_PORTS](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L14))
+5. check the custom ports are opened
+6. run tests
+7. stop _nodeos-se_
+8. check custom posts are closed
 
 #### Publishing to npmjs
 
 There is 2 conditions that needed to publish a new version of the package to [npmjs]( ton-node-kafka-msg-port)
 
-- commit in master
-- version is changed in [package.json](https://github.com/ton-actions/tonos-se/blob/main/package.json#L3)
+1. commit in master
+2. version is changed in [package.json](https://github.com/ton-actions/tonos-se/blob/main/package.json#L3)
 
 ### Build binary application pack
 
@@ -238,7 +238,7 @@ tonos-se config --github-binaries-repository example/example
 
 **❓Issue:** Subscribe for transactions with addresses (ABIv1) test fails on Windows.
 
-**Answer:** We found out some strange behavior while using ton-client-js's tests on Windows. We guess it could be connected with some internal node's problem. But we found a workaround. We created an [issue](https://github.com/tonlabs/tonos-se/issues/13) and opened a [pull request](https://github.com/tonlabs/ton-client-js/pull/206) to solve the problem. 
+**🙋Answer:** We found out some strange behavior while using ton-client-js's tests on Windows. We guess it could be connected with some internal node's problem. But we found a workaround. We created an [issue](https://github.com/tonlabs/tonos-se/issues/13) and opened a [pull request](https://github.com/tonlabs/ton-client-js/pull/206) to solve the problem. 
 
 _UPD: pull request was successfully merged to master branch. To solve the problem pull last changes from [tonlabs/ton-client-js](https://github.com/tonlabs/ton-client-js)_ 
 
@@ -246,16 +246,31 @@ _UPD: pull request was successfully merged to master branch. To solve the proble
 
 **❓Issue:** tonos-se command not found after installation
 
-**Answer:** You need to re-read your bash profile. To solve the problem just open a new terminal window/tab.
+**🙋Answer:** You need to re-read your bash profile. To solve the problem just open a new terminal window/tab.
 
 ##
 
 **❓Issue:** After removing the npm package all processes like arango, nginx, etc... still in running state 
 
-**Answer:** Please install _tonos-se_ again, then use _tonos-se remove_ for removing internal applications. And then remove the npm package.
+**🙋Answer:** Please install _tonos-se_ again, then use _tonos-se remove_ for removing internal applications. And then remove the npm package.
 
 ##
 
 **❓Issue:** I got some warnings from Windows Firewall what should I do?
 
-**Answer:** All internal applications build from official sources. Feel free to discover it if you want. But make the npm package works fine you need to _Allow access_ for them.
+**🙋Answer:** All internal applications build from official sources. Feel free to discover it if you want. But make the npm package works fine you need to _Allow access_ for them.
+
+**❓Issue:** Is it possible to use ENV variables for configuring ports?
+
+**🙋Answer:** Yes. We have provided such an opportunity. Use these env variables to configure listenings ports.
+
+- TONOS_SE_NGINX_PORT
+- TONOS_SE_Q_PORT
+- TONOS_SE_NODESE_PORT
+- TONOS_SE_NODESE_KAFKA_MSG_PORT
+- TONOS_SE_NODESE_ADNL_PORT
+- TONOS_SE_ARANGO_PORT
+- TONOS_RELEASE_TAG
+- GITHUB_BINARIES_REPOSITORY
+
+
