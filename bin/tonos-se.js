@@ -33,7 +33,8 @@ async function main() {
           content: [
             { name: 'start | stop | restart', summary: 'Start, stop or restart necessary services.' },
             { name: 'config', summary: 'Show and configure listening ports and other options. Follow \'config options\' in this help section to get details.' },
-            { name: 'reset', summary: 'Soft remove internal applications without data files. Use --hard option for removing whole applications and data files.' },
+            { name: 'reset', summary: 'Reset config parameters and remove internal applications without data files' },
+            { name: 'remove', summary: 'Removing whole applications and data files.' },
             { name: 'status', summary: 'Display status.' },
             { name: 'version', summary: 'Display version of applications.' },
           ],
@@ -79,17 +80,18 @@ async function main() {
         throw ex;
       }
 
-      process.stdout.write(boxen(`GraphQL: http://localhost:${global.nginxPort}/graphql\nArangoDB: http://localhost:${global.arangoPort}\nServer folder: ${global.serverPath}`, { padding: 1, margin: 1, borderStyle: 'double' }));
+      process.stdout.write(boxen(`GraphQL: http://localhost:${global.nginxPort}/graphql\nArangoDB: http://localhost:${global.arangoPort}\nApplication folder: ${global.appRoot}`, { padding: 1, margin: 1, borderStyle: 'double' }));
       break;
     }
     case 'stop':
       await tonos.stop();
       break;
     case 'reset': {
-      const resetDefenitions = [
-        { name: 'hard', type: Boolean },
-      ];
-      await tonos.reset(commandLineArgs(resetDefenitions, { argv }).hard);
+      await tonos.reset(false);
+      break;
+    }
+    case 'remove': {
+      await tonos.reset(true);
       break;
     }
     case 'status': {
