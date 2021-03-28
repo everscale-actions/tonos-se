@@ -1,7 +1,7 @@
-[![Cross-Platform Compatibility](https://jstools.dev/img/badges/os-badges.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.ym)
-
 [![CLI](https://github.com/ton-actions/tonos-se/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.yml)
-[![Binaries](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/main.yml)
+[![binaries](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/build-and-release.yml)
+[![npm version](https://badge.fury.io/js/tonos-se.svg)](https://www.npmjs.com/package/tonos-se)
+[![Channel on Telegram](https://img.shields.io/badge/chat-on%20telegram-9cf.svg)](https://t.me/ton_actions_chat) 
 
 # TONOS SE
 
@@ -11,25 +11,23 @@ This cross-platform solution provides [dynamically building](#build-binary-appli
 
  The current solution consists of 2 repositories that solve a specific task.
 
-- [ton-actions/tonos-se](https://github.com/ton-actions/tonos-se) - CLI tool for install and manage TONOS SE (NPM Package)
+- [ton-actions/tonos-se](https://github.com/ton-actions/tonos-se) - CLI tool for installing and managing TONOS SE (NPM Package) which is called `tonos-se`
 - [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries) - additional repository for generating application packs includes binaries and configuration files for different Operating Systems.
 
 ## Features
 
 - 🏄 Easy to install, configure and run
-- 🤹 Cross-platform support (Windows, Linux, MacOS)
+- 🤹 Cross-platform support [![Cross-Platform Compatibility](https://jstools.dev/img/badges/os-badges.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.ym)
 - 🏋️ There is no need a Docker Engine, root permissions and WSL for Windows
 - 🏊 All components and files, configurations, and databases in a one place
 - 🚴 Automatically updates
 - 🧘 Sentry integration [[WIP]](https://github.com/ton-actions/tonos-se/pull/85)
 
-## Installation
+## Requirements
 
-Our package requires [Node.js](https://nodejs.org/) v14+ to run. Also, Ton Node depends on libSSL >= 1.1. Please take care of the installation required tools and last updates for your Operating System.
+NPM package `tonos-se` requires [Node.js](https://nodejs.org/) v14+ to run. Also, _Ton Node_ depends on _libSSL >= 1.1_ and it means that if your Operating System doesn't have it (For example, Ubuntu 16) you might get unstable behaviour. Please take care of the installation required tools and last updates for your Operating System.
 
-### Requirements
-
-#### Windows
+### Windows
 
 Install last updates and VC++ Runtime on Windows. Download and install it you can from the [latest supported Visual C++](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0) page.
 
@@ -39,28 +37,35 @@ Also, you need to set the PowerShell Execution Policy from Restricted to RemoteS
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 ```
 
-#### MacOS or Linux Based Distributions
+### MacOS or Linux Based Distributions
 
-MacOS or Linux Based Distributions do not have any special requirements. But the first time you try to install a package globally using npm, using the syntax npm install -g <package> on a Mac, or Linux, you might get a weird error, saying something like "Missing write access to /usr/local/lib/node_modules or /usr/local/bin". You can use [official guide to resolve the problem](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) or just grant permissions to the particular folders like this:
+MacOS or Linux Based Distributions do not have any special requirements. But the first time you try to install a package globally on a Mac, or Linux, you might get a weird error, saying something like "Missing write access to /usr/local/lib/node_modules or /usr/local/bin". You can use [official guide to resolve the problem](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) or just grant permissions to the particular folders like this:
 
 ```sh
-sudo chown -R $USER /usr/local/lib/node_modules
+# here could be another node modules folder. It depends on your Environment
+sudo chown -R $USER /usr/local/lib/node_modules 
 sudo chown -R $USER /usr/local/bin
 ```
 
-### Manual installation
-
-```sh
-git clone https://github.com/ton-actions/tonos-se
-cd tonos-se
-npm i -g
-```
-
-### Installation using global NPM package
+## Installation
 
 ```sh
 npm install -g tonos-se
 ```
+
+## Update
+
+To update to the last version `tonos-se` stop it, update npm package and start again.
+
+```sh
+tonos-se stop
+npm update -g tonos-se
+tonos-se start
+```
+
+## Uninstall
+
+To completely uninstall `tonos-se` use command `tonos-se remove` for stopping and deleting internal data files and applications. And then `npm remove -g tonos-se`
 
 ## Usage
 
@@ -68,19 +73,19 @@ We created easy to use application. So here are a few native commands you needed
 
 ### First start
 
-Before start tonos-se checks available versions for updating using hash sha256. In case it detects differences, tonos-se will download a new version of binary files and install it. So if a new version of binaries files is released, users will get a new version before the next start.
+Before start `tonos-se` checks current installed binary package using hash sha256. In case, it detects differences, `tonos-se` will download a new version of binary application pack and install it. So if a new version of binaries files is released, users will get a new version before the next start.
 
 ```sh
-tonos-se start # Start all necessary applications
+tonos-se start
 ```
 
-_tonos-se_ downloads an binary pack, unpacks it to _userFolder/.tonos-se_. Since that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
+`tonos-se` downloads an binary pack, unpacks it to _user folder/.tonos-se_. From that moment all files like applications, configuration, data and log files will be placed there. You can do deep configuring, backup or experiments if you want.
 
 <img width="859" alt="Screenshot 2021-03-27 at 16 56 54" src="https://user-images.githubusercontent.com/54890287/112723099-fad4b680-8f1d-11eb-8a9b-e2a3c45be21c.png">
 
 ### Basic commands
 
-Use these commands to start, stop, restart and get status.
+Use these commands to start, stop, restart and get status or help.
 
 ```sh
 tonos-se start
@@ -90,25 +95,17 @@ tonos-se status
 tonos-se help
 ```
 
-To get current settings just run _config_ command
-
-```sh
-tonos-se config
-```
+To get current settings just run `tonos-se config` command.
 
 <img width="859" alt="Screenshot 2021-03-27 at 17 02 40" src="https://user-images.githubusercontent.com/54890287/112723179-543ce580-8f1e-11eb-875e-0df49e736ab2.png">
 
-To get versions of applications, available tonos-se binary packs or other informations use _version_ command
-
-```sh
-tonos-se version
-```
+To get versions of applications, available tonos-se binary packs or other informations use `tonos-se version` command.
 
 <img width="1066" alt="Screenshot 2021-03-25 at 12 31 45" src="https://user-images.githubusercontent.com/54890287/112451045-185f2000-8d66-11eb-9c43-e545b0009822.png">
 
 ### Configuring ports
 
-To set a custom port for any application in the solution separately or using one command. To apply new changes use _restart_ command.
+To set a custom port for any application in the solution separately or using one command. To apply new changes use `tonos-se restart`.
 
 > ⚠️ we strongly do not recommend you to use ports less than 1024. Some Operating Systems have restrictions about it.
 
@@ -140,23 +137,23 @@ Here is a real case when ports are already used by some application.
 
 > ⚠️ use this configuration parameter if you understand what you do
 
-By default _tonos-se_ uses a latest version of TON OS SE binary application pack. But you might want to downgrade to a previous version for testing something or maybe do some experiments, etc. Available versions could be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries). Use this command for setting up a version you want.
+By default `tonos-se` uses a latest version of TON OS SE binary application pack. But you might want to downgrade to a previous version for testing something or maybe do some experiments, etc. Available versions can be found here [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries). Use this command for setting up a version you want.
 
 ```sh
-# Get available versions
+# Get installed versions of applications and available versions
 tonos-se version
 
 # To change tonos-se versions use command
 tonos-se config --tonos-se-version 0.25.0
 ```
 
-When the next happens, _tonos-se_ will verify the checksum and do automatically soft upgrade/downgrade your current version. But be careful using downgrade. This may cause the TON OS SE to behave strangely. If something goes wrong use the commands below to fix a potential problem.
+When it happens, `tonos-se` verifies a checksum and does automatically soft upgrade/downgrade your current version. But be careful using downgrade / upgrade. This may affects tonos-se data files. If something goes wrong use the commands below to fix a potential problem.
 
 ![render1616679986703-min](https://user-images.githubusercontent.com/54890287/112483378-02fbed00-8d8a-11eb-8a95-7f83e59af1c5.gif)
 
 ### Delete applications or data files
 
-Sometimes you might want to reset settings to the default state. _tonos-se_ supports 2 methods like soft and hard state reset.
+Sometimes you might want to reset settings to the default state. `tonos-se` supports 2 methods like soft and hard state reset.
 
 ```sh
 # Soft reset. Data and log files are not removed.
@@ -166,23 +163,11 @@ tonos-se reset
 tonos-se remove
 ```
 
-## Uninstall
-
-To completely uninstall and npm package use these commands:
-
-```sh
-# Use the remove command to stop all internal apps and remove them.
-tonos-se remove 
-
-# Remove NPM package
-npm remove -g tonos-se
-```
-
 ## CI/CD
 
 Our CI/CD is based on GitHub Workflow and GitHub Actions. As was mentioned before the solution includes 2 repositories to solve paricalar taks. 
 
-### NPM Package _tonos-se_
+### NPM Package `tonos-se`
 
 All logic of build, test and publishing could be found in [.github/workflows/main.yml](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml) file.
 
@@ -192,29 +177,31 @@ In building process is nothing special what you need to know. It is standart tas
 
 The general idea of the pipeline:
 
-1. build and run _nodeos-se_
+1. build and run `nodeos-se`
 2. check the default ports are opened
 3. run tests 
 4. change [default ports](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L13) to the custom ports (env variable [CUSTOM_PORTS](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L14))
 5. check the custom ports are opened
 6. run tests
-7. stop _nodeos-se_
+7. stop `nodeos-se`
 8. check custom posts are closed
 
 #### Publishing to npmjs
 
-There is 2 conditions that needed to publish a new version of the package to [npmjs]( ton-node-kafka-msg-port)
+It is possible to automatically publish a new version of `tonos-se`. There are 2 conditions that needed to publish a new version of the package to [npmjs]( ton-node-kafka-msg-port)
 
 1. commit in master
 2. version is changed in [package.json](https://github.com/ton-actions/tonos-se/blob/main/package.json#L3)
 
 ### Build binary application pack
 
-#### Prepare application pack
-
 To make the process of building fast and easy, we use Github Actions and GitHub Workflow for building all necessary binary application packs in [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries) repository. TonOS SE application pack is a tar.gz archive that contains applications (_Nginx_, _ArangoDB_, _Q Server_, _Ton Node_) and configuration files to a quick start. The full list of application packs could be found [here](https://github.com/ton-actions/tonos-se-binaries/releases).
 
-> Note: The major version of the CLI tool can use only the major version of binaries release. This approach allows us to ensure compatibility between the CLI tool and binary files. So if [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) releases a new version that contains Postgres(for example), we will publish the next major version of binary files. And then we will publish a new major version of the CLI tool, which will be compatible only with the same major version of binary application packs.
+#### Prepare application pack
+
+All application packs is created automatically. When new version [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) is released, new version of binary application pack will be available for release. 
+
+The major version of the `tonos-se` tool can use only the major _version of release_ binary application pack. This approach allows us to guarantee  compatibility between the `tonos-se` tool and binary files. So if [TON OS Startup Edition](https://github.com/tonlabs/tonos-se) releases a new version that contains Postgres(for example), we will publish the next major version of binary files. And then we will publish a new major version of the CLI tool, which will be compatible only with the same major version of binary application packs.
 
 #### How to build custom application pack
 
@@ -226,7 +213,7 @@ The Magic of creating applications pack is described in main.yml workflow file. 
 
 ### Use custom application pack
 
-After you create and test your own application pack time to use it. Change application pack's version or your GitHub repository.
+After you create and test your own application pack time to use it. Change application pack's version or your GitHub repository. And enjoy the result.
 
 ```sh
 tonos-se config --tonos-se-version 0.25.0
@@ -251,13 +238,15 @@ _UPD: pull request was successfully merged to master branch. To solve the proble
 
 **❓Issue:** After removing the npm package all processes like arango, nginx, etc... still in running state 
 
-**🙋Answer:** Please install _tonos-se_ again, then use _tonos-se remove_ for removing internal applications. And then remove the npm package.
+**🙋Answer:** Please install `tonos-se` again, then use `tonos-se remove` for removing internal applications. And then remove the npm package.
 
 ##
 
 **❓Issue:** I got some warnings from Windows Firewall what should I do?
 
 **🙋Answer:** All internal applications build from official sources. Feel free to discover it if you want. But make the npm package works fine you need to _Allow access_ for them.
+
+##
 
 **❓Issue:** Is it possible to use ENV variables for configuring ports?
 
@@ -271,5 +260,31 @@ _UPD: pull request was successfully merged to master branch. To solve the proble
 - TONOS_SE_ARANGO_PORT
 - TONOS_RELEASE_TAG
 - GITHUB_BINARIES_REPOSITORY
+
+
+##
+
+**❓Issue:** How to install `tonos-se` from the repository?
+
+**🙋Answer:** It is possible to install the tool using source code.
+
+```sh
+git clone https://github.com/ton-actions/tonos-se
+cd tonos-se
+npm i -g
+```
+
+##
+
+**❓Issue:** I want to do some experiments without installing `tonos-se` globally. How can I do this?
+
+**🙋Answer:** You need to clone current repository. Change working directory to _bin_ and use available commands adding `node` before. For example, `node ./tonos-se.js start`
+
+
+## Plans for the future
+
+- Add Sentry integration
+- Add Unit Tests
+- Migrate to TypeScript
 
 
