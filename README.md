@@ -20,7 +20,8 @@ This cross-platform solution provides [dynamically building](#build-binary-appli
 - 🤹 Cross-platform support [![Cross-Platform Compatibility](https://jstools.dev/img/badges/os-badges.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.ym)
 - 🏋️ There is no need a Docker Engine, root permissions and WSL for Windows
 - 🏊 All components and files, configurations, and databases in a one place
-- 🚴 Automatically updates
+- 🚣 Automatically building and publishing new releases
+- 🚴 Automatically updates user's applications
 - 🧘 Sentry integration [[WIP]](https://github.com/ton-actions/tonos-se/pull/85)
 
 ## Requirements
@@ -34,7 +35,7 @@ Install last updates and VC++ Runtime on Windows. Download and install it you ca
 Also, you need to set the PowerShell Execution Policy from Restricted to RemoteSigned before you can install NPM packages globally.
 
 ```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### MacOS or Linux Based Distributions
