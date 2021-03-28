@@ -173,13 +173,13 @@ All logic of build, test and publishing could be found in [.github/workflows/mai
 
 The general idea of the pipeline:
 
-1. build and run `nodeos-se`
+1. build and run `tonos-se`
 2. check the default ports are opened
 3. run tests 
 4. change [default ports](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L13) to the custom ports (env variable [CUSTOM_PORTS](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml#L14))
 5. check the custom ports are opened
 6. run tests
-7. stop `nodeos-se`
+7. stop `tonos-se`
 8. check custom posts are closed
 
 CI/CD **automatically publishes** a new version of `tonos-se`. There are 2 conditions that needed to publish a new version of the package to [npmjs]( ton-node-kafka-msg-port)
@@ -263,8 +263,9 @@ _UPD: pull request was successfully merged to master branch. To solve the proble
 **🙋Answer:** It is possible to install the tool using source code.
 
 ```sh
-git clone https://github.com/ton-actions/tonos-se
+git clone https://github.com/ton-actions/tonos-se.git
 cd tonos-se
+npm i --production
 npm i -g
 ```
 
