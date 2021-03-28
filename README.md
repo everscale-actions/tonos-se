@@ -53,20 +53,6 @@ sudo chown -R $USER /usr/local/bin
 npm install -g tonos-se
 ```
 
-## Update
-
-To update to the last version `tonos-se` stop it, update npm package and start again.
-
-```sh
-tonos-se stop
-npm update -g tonos-se
-tonos-se start
-```
-
-## Uninstall
-
-To completely uninstall `tonos-se` use command `tonos-se remove` for stopping and deleting internal data files and applications. And then `npm remove -g tonos-se`
-
 ## Usage
 
 We created easy to use application. So here are a few native commands you needed.
@@ -163,17 +149,27 @@ tonos-se reset
 tonos-se remove
 ```
 
+## Update 
+
+To update to the last version `tonos-se` stop it, update npm package and start again.
+
+```sh
+tonos-se stop
+npm update -g tonos-se
+tonos-se start
+```
+
+## Uninstall
+
+To completely uninstall `tonos-se` use command `tonos-se remove` for stopping and deleting internal data files and applications. And then `npm remove -g tonos-se`
+
 ## CI/CD
 
-Our CI/CD is based on GitHub Workflow and GitHub Actions. As was mentioned before the solution includes 2 repositories to solve paricalar taks. 
+Our CI/CD is based on GitHub Workflow and GitHub Actions. As was mentioned before the solution includes 2 repositories to solve particular tasks. General information about how it builds and tests and publishes described below.
 
 ### NPM Package `tonos-se`
 
-All logic of build, test and publishing could be found in [.github/workflows/main.yml](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml) file.
-
-#### Build and test
-
-In building process is nothing special what you need to know. It is standart task of building nodejs applications. But here is a 2 words about testing. For testing into the pipline we use official Node Se tests. It can guarantee that everything is going fine. 
+All logic of build, test and publishing could be found in [.github/workflows/main.yml](https://github.com/ton-actions/tonos-se/blob/main/.github/workflows/main.yml) file. In building process is nothing special what you need to know. It is standart task of building nodejs applications. But here is a 2 words about testing. For testing into the pipline we use official Node Se tests. It can guarantee that everything is going fine. 
 
 The general idea of the pipeline:
 
@@ -186,14 +182,12 @@ The general idea of the pipeline:
 7. stop `nodeos-se`
 8. check custom posts are closed
 
-#### Publishing to npmjs
-
-It is possible to automatically publish a new version of `tonos-se`. There are 2 conditions that needed to publish a new version of the package to [npmjs]( ton-node-kafka-msg-port)
+CI/CD **automatically publishes** a new version of `tonos-se`. There are 2 conditions that needed to publish a new version of the package to [npmjs]( ton-node-kafka-msg-port)
 
 1. commit in master
 2. version is changed in [package.json](https://github.com/ton-actions/tonos-se/blob/main/package.json#L3)
 
-### Build binary application pack
+### Binary application pack
 
 To make the process of building fast and easy, we use Github Actions and GitHub Workflow for building all necessary binary application packs in [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries) repository. TonOS SE application pack is a tar.gz archive that contains applications (_Nginx_, _ArangoDB_, _Q Server_, _Ton Node_) and configuration files to a quick start. The full list of application packs could be found [here](https://github.com/ton-actions/tonos-se-binaries/releases).
 
@@ -211,7 +205,7 @@ It is possible to use custom versions or default config files of any application
 
 The Magic of creating applications pack is described in main.yml workflow file. Feel free to read the documentation about a structure and details on the main page [ton-actions/tonos-se-binaries](https://github.com/ton-actions/tonos-se-binaries).
 
-### Use custom application pack
+#### Use custom application pack
 
 After you create and test your own application pack time to use it. Change application pack's version or your GitHub repository. And enjoy the result.
 
