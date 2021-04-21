@@ -84,7 +84,12 @@ async function main() {
         throw ex;
       }
 
-      process.stdout.write(boxen(`GraphQL: http://localhost:${global.nginxPort}/graphql\nArangoDB: http://localhost:${global.arangoPort}\nApplication folder: ${global.appRoot}`, { padding: 1, margin: 1, borderStyle: 'double' }));
+      process.stdout.write(boxen(
+        `TON Live Explorer: http://localhost:${global.nginxPort}\n`
+        + `GraphQL: http://localhost:${global.nginxPort}/graphql\n`
+        + `ArangoDB: http://localhost:${global.arangoPort}\nApplication folder: ${global.appRoot}`,
+        { padding: 1, margin: 1, borderStyle: 'double' },
+      ));
       break;
     }
     case 'stop':
