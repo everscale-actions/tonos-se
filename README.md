@@ -101,7 +101,6 @@ tonos-se config --nginx-port 8082 # Nginx Listening Port
 tonos-se config --q-server-port 5000 # Q Server Listening Port
 tonos-se config --ton-node-port 50400 # Ton Node Listening Port
 tonos-se config --ton-node-kafka-msg-port 7000 # Ton Node: Kafka Listening Port
-tonos-se config --ton-node-adnl-port 7001 # Ton Node: ADNL Listening Port
 tonos-se config --arango-port 7433 # ArangoDB Listening Port
 
 # It is possible to set all parameters using one command
@@ -110,7 +109,6 @@ tonos-se config --nginx-port 8082 \
   --arango-port 7433 \
   --ton-node-port 55443 \
   --ton-node-kafka-msg-port 7000 \
-  --ton-node-adnl-port 7001
 
 # To apply new changes
 tonos-se restart
@@ -251,7 +249,6 @@ _UPD: pull request was successfully merged to master branch. To solve the proble
 - TONOS_SE_Q_PORT
 - TONOS_SE_NODESE_PORT
 - TONOS_SE_NODESE_KAFKA_MSG_PORT
-- TONOS_SE_NODESE_ADNL_PORT
 - TONOS_SE_ARANGO_PORT
 - TONOS_RELEASE_TAG
 - GITHUB_BINARIES_REPOSITORY
@@ -282,5 +279,3 @@ npm i -g
 - Add Sentry integration
 - Add Unit Tests
 - Migrate to TypeScript
-
-

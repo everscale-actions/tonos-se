@@ -10,8 +10,8 @@ on:
     types: [labeled]
 
 env:
-  DEFAULT_PORTS: '{"nginx":8080,"arango":8529,"qserver":4000,"node":40301,"requests":3000,"adnl":3030}'
-  CUSTOM_PORTS: '{"nginx":8881,"arango":8882,"qserver":8883,"node":8884,"requests":8885,"adnl":8886}'
+  DEFAULT_PORTS: '{"nginx":8080,"arango":8529,"qserver":4000,"node":40301,"requests":3000}'
+  CUSTOM_PORTS: '{"nginx":8881,"arango":8882,"qserver":8883,"node":8884,"requests":8885}'
 
 defaults:
   run:
@@ -112,7 +112,7 @@ jobs:
 
       - name: Change default ports
         run: |
-          tonos-se config --nginx-port ${{ env.CUSTOM_PORTS_NGINX }} --arango-port ${{ env.CUSTOM_PORTS_ARANGO }} --ton-node-port ${{ env.CUSTOM_PORTS_NODE }} --q-server-port ${{ env.CUSTOM_PORTS_QSERVER }} --ton-node-kafka-msg-port ${{ env.CUSTOM_PORTS_REQUESTS }} --ton-node-adnl-port ${{ env.CUSTOM_PORTS_ADNL }}
+          tonos-se config --nginx-port ${{ env.CUSTOM_PORTS_NGINX }} --arango-port ${{ env.CUSTOM_PORTS_ARANGO }} --ton-node-port ${{ env.CUSTOM_PORTS_NODE }} --q-server-port ${{ env.CUSTOM_PORTS_QSERVER }} --ton-node-kafka-msg-port ${{ env.CUSTOM_PORTS_REQUESTS }}
 
       - name: Run TON OS SE
         run: tonos-se start
@@ -155,4 +155,4 @@ jobs:
         if: ${{ steps.npm-publish.outputs.type != 'none' && steps.npm-publish.outputs.dry-run != 'true' }}
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: 'v${{ steps.npm-publish.outputs.version }}'
+          tag: "v${{ steps.npm-publish.outputs.version }}"
