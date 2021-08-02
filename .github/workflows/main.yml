@@ -62,7 +62,7 @@ jobs:
       - name: Install tonos-se tools
         working-directory: tonos-se
         run: |
-          npm i
+          npm ci
           npm i -g
 
       - name: Install Type Script
