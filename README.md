@@ -1,7 +1,9 @@
-[![CLI](https://github.com/ton-actions/tonos-se/actions/workflows/main.yml/badge.svg)](https://github.com/ton-actions/tonos-se/actions/workflows/main.yml)
-[![binaries](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/ton-actions/tonos-se-binaries/actions/workflows/build-and-release.yml)
-[![npm version](https://badge.fury.io/js/tonos-se.svg)](https://www.npmjs.com/package/tonos-se)
-[![Channel on Telegram](https://img.shields.io/badge/chat-on%20telegram-9cf.svg)](https://t.me/ton_actions_chat) 
+[<img src="https://avatars3.githubusercontent.com/u/67861283?s=150&u=4536b61595a1b422604fab8a7012092d891278f6&v=4" align="right" width="150">](https://freeton.org/)
+
+# DEPRECATED
+> This project deprecated and no longer supported.
+> 
+> Please take a look at https://github.com/everscale-actions/evernode-se
 
 # TONOS SE
 
